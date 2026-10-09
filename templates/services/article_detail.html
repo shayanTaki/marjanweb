@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ article.title }}{% endblock %}
+
+{% block content %}
+
+<section class="bg-gradient-to-bl from-night-900 via-night-900 to-night-800 py-12">
+    <div class="max-w-4xl mx-auto px-4 lg:px-8">
+        <nav class="flex items-center gap-2 text-sm text-night-400 mb-6">
+            <a href="{% url 'home' %}" class="hover:text-primary">خانه</a>
+            <i class="bi bi-chevron-left text-xs"></i>
+            <a href="{% url 'article_list' %}" class="hover:text-primary">مقالات</a>
+            <i class="bi bi-chevron-left text-xs"></i>
+            <span class="text-primary font-semibold line-clamp-1">{{ article.title|truncatewords:5 }}</span>
+        </nav>
+
+        {% if article.category %}
+        <div class="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-4">
+            <i class="bi bi-tag-fill"></i>
+            {{ article.category.name }}
+        </div>
+        {% endif %}
+
+        <h1 class="text-3xl md:text-4xl lg:text-5xl font-black text-dark leading-tight mb-6" data-aos="fade-up">
+            {{ article.title }}
+        </h1>
+
+        <div class="flex items-center gap-4 text-sm text-night-400" data-aos="fade-up">
+            <span class="flex items-center gap-1.5"><i class="bi bi-calendar3"></i> {{ article.created_at|date:"Y/m/d" }}</span>
+            <span class="flex items-center gap-1.5"><i class="bi bi-eye"></i> {{ article.views }} بازدید</span>
+            <span class="flex items-center gap-1.5"><i class="bi bi-clock"></i> {{ article.content|wordcount|div:200|add:1 }} دقیقه مطالعه</span>
+        </div>
+    </div>
+</section>
+
+<section class="py-12">
+    <div class="max-w-4xl mx-auto px-4 lg:px-8">
+        {% if article.image %}
+        <div class="rounded-3xl overflow-hidden mb-8" data-aos="fade-up">
+            <img src="{{ article.image.url }}" alt="{{ article.title }}" class="w-full h-auto">
+        </div>
+        {% endif %}
+
+        {% if article.summary %}
+        <div class="bg-primary-50 rounded-3xl p-6 mb-8 border-r-4 border-primary" data-aos="fade-up">
+            <p class="text-night-200 leading-8 font-medium">{{ article.summary }}</p>
+        </div>
+        {% endif %}
+
+        <div class="bg-night-800 rounded-3xl p-8 md:p-12 border border-night-700 prose prose-lg max-w-none
+                    prose-headings:text-dark prose-headings:font-black
+                    prose-p:text-night-300 prose-p:leading-8
+                    prose-a:text-primary prose-a:font-bold
+                    prose-strong:text-dark
+                    prose-ul:text-night-300 prose-li:my-2
+                    prose-blockquote:border-r-4 prose-blockquote:border-primary prose-blockquote:bg-primary-50 prose-blockquote:rounded-2xl prose-blockquote:py-4 prose-blockquote:pr-6 prose-blockquote:not-italic
+                    whitespace-pre-line" data-aos="fade-up">
+            {{ article.content }}
+        </div>
+
+        <!-- Share -->
+        <div class="mt-8 p-6 bg-night-800 rounded-3xl border border-night-700 flex items-center justify-between flex-wrap gap-4">
+            <div class="font-bold text-dark">این مقاله را به اشتراک بگذارید:</div>
+            <div class="flex gap-2">
+                <a href="#" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-primary hover:text-white flex items-center justify-center transition">
+                    <i class="bi bi-telegram"></i>
+                </a>
+                <a href="#" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-primary hover:text-white flex items-center justify-center transition">
+                    <i class="bi bi-whatsapp"></i>
+                </a>
+                <a href="#" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-primary hover:text-white flex items-center justify-center transition">
+                    <i class="bi bi-twitter-x"></i>
+                </a>
+                <a href="#" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-primary hover:text-white flex items-center justify-center transition">
+                    <i class="bi bi-link-45deg"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Related -->
+        {% if related %}
+        <div class="mt-16" data-aos="fade-up">
+            <h2 class="text-2xl font-black text-dark mb-8 flex items-center gap-3">
+                <span class="w-1.5 h-8 bg-accent rounded-full"></span>
+                مقالات مرتبط
+            </h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                {% for item in related %}
+                <a href="{% url 'article_detail' item.slug %}"
+                   class="group bg-night-800 rounded-3xl overflow-hidden border border-night-700 hover:shadow-xl transition-all hover:-translate-y-1">
+                    <div class="h-40 bg-gradient-to-br from-primary/20 to-accent/10 overflow-hidden">
+                        {% if item.image %}
+                            <img src="{{ item.image.url }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        {% else %}
+                            <div class="w-full h-full flex items-center justify-center">
+                                <i class="bi bi-newspaper text-5xl text-primary/30"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="p-5">
+                        <h3 class="font-bold text-dark text-sm leading-6 mb-2 group-hover:text-primary transition line-clamp-2">
+                            {{ item.title }}
+                        </h3>
+                        <div class="flex items-center gap-2 text-xs text-night-500">
+                            <i class="bi bi-calendar3"></i>
+                            <span>{{ item.created_at|date:"Y/m/d" }}</span>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}

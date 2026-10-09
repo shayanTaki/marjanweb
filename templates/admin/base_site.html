@@ -1,0 +1,29 @@
+{% extends "admin/base.html" %}
+{% load static %}
+{% load i18n static %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <link href="{% static 'vendor/vazirmatn/vazirmatn.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'vendor/bootstrap-icons/bootstrap-icons.min.css' %}">
+    <link rel="stylesheet" href="{% static 'admin-custom/css/admin.css' %}">
+    <link rel="stylesheet" href="{% static 'admin-custom/css/topnav.css' %}">
+    <link rel="stylesheet" href="{% static 'admin-custom/css/responsive.css' %}">
+{% endblock %}
+
+{% block branding %}
+    <div class="custom-brand">
+        <div class="custom-brand-logo"><i class="bi bi-heart-pulse-fill"></i></div>
+        <div class="custom-brand-text">
+            <div class="custom-brand-title">مرجان آرام</div>
+            <div class="custom-brand-subtitle">پنل مدیریت</div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block welcome-msg %}{% endblock %}
+{% block userlinks %}{% endblock %}
+{% block nav-global %}{% endblock %}
+{% block nav-sidebar %}{% include "admin/top_nav.html" %}{% endblock %}

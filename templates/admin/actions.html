@@ -1,0 +1,29 @@
+{% load i18n %}
+<div class="actions custom-actions">
+    <label>
+        <i class="bi bi-lightning-charge-fill"></i>
+        <span>عملیات:</span>
+    </label>
+    <select name="action" required>
+        <option value="" selected>---------</option>
+        {% for option in action_form.fields.action.choices %}
+            {% if option.0 %}
+                <option value="{{ option.0 }}">{{ option.1 }}</option>
+            {% endif %}
+        {% endfor %}
+    </select>
+    <button type="submit" class="button" title="{% trans 'Run the selected action' %}" name="index" value="{{ action_index|default:0 }}">
+        <i class="bi bi-play-fill"></i>
+        اجرا
+    </button>
+    {% if actions_selection_counter %}
+        <span class="action-counter" data-actions-icnt="{{ cl.result_list|length }}">{{ selection_note }}</span>
+        {% if cl.result_count != cl.result_list|length %}
+            <span class="all">{{ selection_note_all }}</span>
+            <span class="question">
+                <a href="#" id="select-all-toggle" title="{% trans "Click here to select the objects across all pages" %}">{{ cl.result_count }} {{ module_name }}</a>
+            </span>
+            <span class="clear"><a href="#">{% trans "Clear selection" %}</a></span>
+        {% endif %}
+    {% endif %}
+</div>

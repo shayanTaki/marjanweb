@@ -1,0 +1,121 @@
+/* ====== رفع مشکل اسکرول و جهت‌دهی ====== */
+/* تنظیم جهت اصلی به LTR برای انتقال اسکرول‌بار به سمت راست */
+html {
+    direction: ltr;
+}
+
+/* بازگرداندن جهت متن به RTL */
+body {
+    direction: rtl;
+    margin: 0;
+    padding: 0;
+    font-family: 'Vazirmatn', Tahoma, sans-serif;
+    background-color: #0f111a;
+    color: #e0e0e0;
+    overflow: hidden; /* مخفی کردن اسکرول پیش‌فرض بدنه */
+}
+
+/* کانتینر اصلی برای اسکرول داخلی */
+#container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow-y: auto; /* فقط محتوای داخلی اسکرول می‌خورد */
+    overflow-x: hidden;
+}
+
+/* ====== اصلاح نوار ناوبری بالای صفحه ====== */
+#header {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 1000;
+    height: 60px;
+    background-color: #1a1e29;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+}
+
+/* ====== اصلاح چیدمان فرم‌ها ====== */
+.main {
+    margin-top: 60px; /* فاصله از منوی بالایی */
+    padding: 20px;
+    flex-grow: 1;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#content {
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    margin: 0 auto; /* وسط‌چین کردن محتوا */
+}
+
+/* اصلاح ردیف‌های فرم */
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    margin-bottom: 15px;
+    background: #1a1e29;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #2a3040;
+}
+
+.form-row .field-box {
+    flex: 1;
+    min-width: 300px;
+    padding: 10px;
+}
+
+/* ====== استایل فیلدهای ورودی ====== */
+select, input[type="text"], input[type="password"], input[type="email"], textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    background-color: #0f111a;
+    color: #fff;
+    border: 1px solid #3a4355;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+select:focus, input:focus, textarea:focus {
+    border-color: #4a90e2;
+}
+
+/* ====== استایل دکمه‌ها ====== */
+.button, input[type="submit"], input[type="button"] {
+    background-color: #4a90e2;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.button:hover, input[type="submit"]:hover {
+    background-color: #357abd;
+}
+
+/* ====== استایل اسکرول‌بار سفارشی ====== */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #0f111a;
+}
+::-webkit-scrollbar-thumb {
+    background: #3a4355;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #4a90e2;
+}

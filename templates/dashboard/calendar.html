@@ -1,0 +1,397 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}تقویم نوبت‌ها{% endblock %}
+
+{% block content %}
+<section class="min-h-screen bg-night-900 py-8">
+    <div class="max-w-7xl mx-auto px-4">
+
+        <!-- Header -->
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+                <h1 class="text-3xl font-black text-white mb-1">تقویم نوبت‌ها</h1>
+                <p class="text-night-400 text-sm">{{ date_range_title }}</p>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                <a href="{% url 'dashboard:add_appointment' %}" class="inline-flex items-center gap-2 bg-gradient-to-l from-emerald-500 to-emerald-600 hover:shadow-lg text-white font-bold px-5 py-2.5 rounded-2xl transition text-sm">
+                    <i class="bi bi-plus-circle-fill"></i> نوبت جدید
+                </a>
+                <a href="{% url 'dashboard:home' %}" class="inline-flex items-center gap-2 bg-night-800 hover:bg-night-700 border border-night-700 text-white font-bold px-5 py-2.5 rounded-2xl transition text-sm">
+                    <i class="bi bi-arrow-right"></i> داشبورد
+                </a>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="bg-gradient-to-br from-night-800 to-night-900 border border-night-700 rounded-3xl p-5 mb-6">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+
+                <!-- View type tabs -->
+                <div class="flex gap-2 bg-night-900 p-1 rounded-2xl">
+                    <a href="?view=day&date={{ target_date_jalali.year }}-{{ target_date_jalali.month }}-{{ target_date_jalali.day }}{% if selected_staff_id %}&staff={{ selected_staff_id }}{% endif %}"
+                       class="px-4 py-2 rounded-xl text-sm font-bold transition
+                       {% if view_type == 'day' %}bg-primary text-white{% else %}text-night-400 hover:text-white{% endif %}">
+                        <i class="bi bi-calendar-day"></i> روزانه
+                    </a>
+                    <a href="?view=week&date={{ target_date_jalali.year }}-{{ target_date_jalali.month }}-{{ target_date_jalali.day }}{% if selected_staff_id %}&staff={{ selected_staff_id }}{% endif %}"
+                       class="px-4 py-2 rounded-xl text-sm font-bold transition
+                       {% if view_type == 'week' %}bg-primary text-white{% else %}text-night-400 hover:text-white{% endif %}">
+                        <i class="bi bi-calendar-week"></i> هفتگی
+                    </a>
+                    <a href="?view=month&date={{ target_date_jalali.year }}-{{ target_date_jalali.month }}-{{ target_date_jalali.day }}{% if selected_staff_id %}&staff={{ selected_staff_id }}{% endif %}"
+                       class="px-4 py-2 rounded-xl text-sm font-bold transition
+                       {% if view_type == 'month' %}bg-primary text-white{% else %}text-night-400 hover:text-white{% endif %}">
+                        <i class="bi bi-calendar-month"></i> ماهانه
+                    </a>
+                </div>
+
+                <!-- Navigation -->
+                <div class="flex items-center gap-2">
+                    {% if view_type == 'day' %}
+                        <a href="?view=day&date={{ target_date|date:'Y-m-d' }}&staff={{ selected_staff_id|default:'' }}" class="hidden"></a>
+                    {% endif %}
+                    <a href="?view={{ view_type }}&date={% with yesterday=target_date|date:'Y-m-d' %}{{ yesterday }}{% endwith %}{% if selected_staff_id %}&staff={{ selected_staff_id }}{% endif %}"
+                       class="w-10 h-10 rounded-xl bg-night-800 hover:bg-night-700 border border-night-700 flex items-center justify-center transition">
+                        <i class="bi bi-chevron-right text-night-300"></i>
+                    </a>
+
+                    <a href="?view={{ view_type }}&staff={{ selected_staff_id|default:'' }}"
+                       class="px-4 py-2 rounded-xl bg-primary/10 hover:bg-primary/20 border border-primary/30 text-primary text-sm font-bold transition">
+                        امروز
+                    </a>
+
+                    <a href="?view={{ view_type }}&date={% with tomorrow=target_date|date:'Y-m-d' %}{{ tomorrow }}{% endwith %}{% if selected_staff_id %}&staff={{ selected_staff_id }}{% endif %}"
+                       class="w-10 h-10 rounded-xl bg-night-800 hover:bg-night-700 border border-night-700 flex items-center justify-center transition">
+                        <i class="bi bi-chevron-left text-night-300"></i>
+                    </a>
+                </div>
+
+                <!-- Staff filter -->
+                <form method="get" class="flex gap-2">
+                    <input type="hidden" name="view" value="{{ view_type }}">
+                    <input type="hidden" name="date" value="{{ target_date_jalali.year }}-{{ target_date_jalali.month }}-{{ target_date_jalali.day }}">
+                    <select name="staff" class="px-4 py-2 rounded-xl bg-night-900 border border-night-700 text-white text-sm focus:border-primary outline-none"
+                            onchange="this.form.submit()">
+                        <option value="">همه مشاوران</option>
+                        {% for s in staff_list %}
+                        <option value="{{ s.id }}" {% if selected_staff_id == s.id %}selected{% endif %}>
+                            {{ s.user.get_full_name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </form>
+
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
+            <div class="bg-gradient-to-br from-night-800 to-night-900 border border-night-700 rounded-2xl p-4 text-center">
+                <div class="text-2xl font-black text-white">{{ stats.total }}</div>
+                <div class="text-xs text-night-400 mt-1">کل</div>
+            </div>
+            <div class="bg-gradient-to-br from-night-800 to-night-900 border border-amber-500/20 rounded-2xl p-4 text-center">
+                <div class="text-2xl font-black text-amber-400">{{ stats.pending }}</div>
+                <div class="text-xs text-night-400 mt-1">در انتظار</div>
+            </div>
+            <div class="bg-gradient-to-br from-night-800 to-night-900 border border-emerald-500/20 rounded-2xl p-4 text-center">
+                <div class="text-2xl font-black text-emerald-400">{{ stats.confirmed }}</div>
+                <div class="text-xs text-night-400 mt-1">تأیید شده</div>
+            </div>
+            <div class="bg-gradient-to-br from-night-800 to-night-900 border border-blue-500/20 rounded-2xl p-4 text-center">
+                <div class="text-2xl font-black text-blue-400">{{ stats.completed }}</div>
+                <div class="text-xs text-night-400 mt-1">انجام شده</div>
+            </div>
+            <div class="bg-gradient-to-br from-night-800 to-night-900 border border-red-500/20 rounded-2xl p-4 text-center">
+                <div class="text-2xl font-black text-red-400">{{ stats.cancelled }}</div>
+                <div class="text-xs text-night-400 mt-1">لغو شده</div>
+            </div>
+        </div>
+
+        <!-- Appointments List -->
+        <div class="bg-gradient-to-br from-night-800 to-night-900 border border-night-700 rounded-3xl overflow-hidden">
+
+            {% if appointments %}
+                {% if view_type == 'day' %}
+                    <!-- Day view: timeline -->
+                    <div class="divide-y divide-night-700">
+                        {% for app in appointments %}
+                        <div class="p-5 hover:bg-night-800/50 transition" data-app-id="{{ app.id }}">
+                            <div class="flex items-center gap-4 flex-wrap">
+
+                                <!-- Time -->
+                                <div class="text-center shrink-0 w-24">
+                                    <div class="text-xl font-black text-white">{{ app.start_time|time:"H:i" }}</div>
+                                    <div class="text-xs text-night-500">تا {{ app.end_time|time:"H:i" }}</div>
+                                </div>
+
+                                <!-- Status indicator -->
+                                <div class="w-1 h-14 rounded-full bg-{{ app.status_color }}-500 shrink-0"></div>
+
+                                <!-- Info -->
+                                <div class="flex-1 min-w-0">
+                                    <div class="font-bold text-white mb-1">{{ app.user.get_full_name|default:app.user.username }}</div>
+                                    <div class="text-sm text-night-400 flex flex-wrap gap-3">
+                                        <span><i class="bi bi-heart-pulse"></i> {{ app.service.name }}</span>
+                                        <span><i class="bi bi-person-badge"></i> {{ app.staff.user.get_full_name }}</span>
+                                        {% if app.user.phone_number %}
+                                        <a href="tel:{{ app.user.phone_number }}" dir="ltr" class="hover:text-primary">
+                                            <i class="bi bi-telephone"></i> {{ app.user.phone_number }}
+                                        </a>
+                                        {% endif %}
+                                    </div>
+                                    {% if app.notes %}
+                                    <div class="text-xs text-night-500 mt-2 italic">"{{ app.notes|truncatechars:80 }}"</div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Status badge -->
+                                <div class="shrink-0">
+                                    <span class="inline-flex items-center gap-1 text-xs font-bold px-3 py-1.5 rounded-full bg-{{ app.status_color }}-500/20 text-{{ app.status_color }}-400 border border-{{ app.status_color }}-500/30">
+                                        {{ app.get_status_display }}
+                                    </span>
+                                </div>
+
+                                <!-- Actions -->
+                                <div class="flex gap-1.5 flex-wrap shrink-0">
+
+                                    {% if app.status == 'pending' %}
+                                    <button type="button" onclick="changeStatus({{ app.id }}, 'confirmed')"
+                                            class="w-9 h-9 rounded-xl bg-emerald-500/20 hover:bg-emerald-500 text-emerald-400 hover:text-white flex items-center justify-center transition border border-emerald-500/30"
+                                            title="تأیید">
+                                        <i class="bi bi-check-lg"></i>
+                                    </button>
+                                    {% endif %}
+
+                                    {% if app.status == 'confirmed' %}
+                                    <button type="button" onclick="changeStatus({{ app.id }}, 'completed')"
+                                            class="w-9 h-9 rounded-xl bg-blue-500/20 hover:bg-blue-500 text-blue-400 hover:text-white flex items-center justify-center transition border border-blue-500/30"
+                                            title="انجام شده">
+                                        <i class="bi bi-patch-check"></i>
+                                    </button>
+                                    {% endif %}
+
+                                    {% if app.status in 'pending,confirmed' %}
+                                    <button type="button" onclick="changeStatus({{ app.id }}, 'no_show')"
+                                            class="w-9 h-9 rounded-xl bg-slate-500/20 hover:bg-slate-500 text-slate-400 hover:text-white flex items-center justify-center transition border border-slate-500/30"
+                                            title="عدم حضور">
+                                        <i class="bi bi-person-x"></i>
+                                    </button>
+
+                                    <button type="button" onclick="cancelAppointment({{ app.id }})"
+                                            class="w-9 h-9 rounded-xl bg-red-500/20 hover:bg-red-500 text-red-400 hover:text-white flex items-center justify-center transition border border-red-500/30"
+                                            title="لغو">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+                                    {% endif %}
+
+                                    <a href="{% url 'appointments:detail' app.pk %}"
+                                       class="w-9 h-9 rounded-xl bg-night-700 hover:bg-primary text-white flex items-center justify-center transition">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+
+                                    <button type="button" onclick="editTime({{ app.id }}, '{{ app.get_jalali_date|date:"Y-m-d" }}', '{{ app.start_time|time:"H:i" }}', '{{ app.end_time|time:"H:i" }}')"
+                                            class="w-9 h-9 rounded-xl bg-amber-500/20 hover:bg-amber-500 text-amber-400 hover:text-white flex items-center justify-center transition border border-amber-500/30"
+                                            title="تغییر زمان">
+                                        <i class="bi bi-clock-history"></i>
+                                    </button>
+
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <!-- Week/Month view: grouped by date -->
+                    {% for date_str, day_apps in grouped.items %}
+                    <div class="border-b border-night-700 last:border-0">
+                        <div class="bg-night-900/50 px-5 py-3 flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <i class="bi bi-calendar3 text-primary"></i>
+                                <span class="font-bold text-white">{{ day_apps.0.get_jalali_date|date:"Y/m/d" }}</span>
+                                <span class="text-xs text-night-400">({{ day_apps|length }} نوبت)</span>
+                            </div>
+                            <a href="?view=day&date={{ day_apps.0.get_jalali_date|date:'Y-m-d' }}" class="text-primary text-xs font-bold hover:underline">
+                                مشاهده روز <i class="bi bi-arrow-left"></i>
+                            </a>
+                        </div>
+                        <div class="divide-y divide-night-700">
+                            {% for app in day_apps %}
+                            <div class="p-4 hover:bg-night-800/30 transition">
+                                <div class="flex items-center gap-3">
+                                    <div class="text-center shrink-0 w-20">
+                                        <div class="font-bold text-white">{{ app.start_time|time:"H:i" }}</div>
+                                    </div>
+                                    <div class="w-1 h-8 rounded-full bg-{{ app.status_color }}-500 shrink-0"></div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="font-bold text-white text-sm">{{ app.user.get_full_name|default:app.user.username }}</div>
+                                        <div class="text-xs text-night-400">{{ app.service.name }}</div>
+                                    </div>
+                                    <span class="inline-flex items-center text-xs font-bold px-2.5 py-1 rounded-full bg-{{ app.status_color }}-500/20 text-{{ app.status_color }}-400">
+                                        {{ app.get_status_display }}
+                                    </span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            {% else %}
+                <div class="text-center py-20">
+                    <i class="bi bi-calendar-x text-6xl text-night-600 mb-4"></i>
+                    <h3 class="text-xl font-bold text-white mb-2">نوبتی در این بازه نیست</h3>
+                    <p class="text-night-400 text-sm mb-6">برای افزودن نوبت جدید کلیک کنید</p>
+                    <a href="{% url 'dashboard:add_appointment' %}" class="inline-flex items-center gap-2 bg-gradient-to-l from-emerald-500 to-emerald-600 text-white font-bold px-6 py-3 rounded-2xl">
+                        <i class="bi bi-plus-circle-fill"></i> افزودن نوبت
+                    </a>
+                </div>
+            {% endif %}
+
+        </div>
+
+    </div>
+</section>
+
+<!-- Edit Time Modal -->
+<div id="editTimeModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="closeEditModal()"></div>
+    <div class="relative bg-gradient-to-br from-night-800 to-night-900 border border-night-700 rounded-3xl shadow-2xl p-6 w-full max-w-md">
+        <h3 class="text-xl font-black text-white mb-5 flex items-center gap-2">
+            <i class="bi bi-clock-history text-amber-400"></i>
+            تغییر زمان نوبت
+        </h3>
+
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm font-bold text-night-300 mb-2">تاریخ (شمسی: YYYY-MM-DD)</label>
+                <input type="text" id="editDate" dir="ltr" placeholder="1405-07-09"
+                       class="w-full px-4 py-3 rounded-xl bg-night-900 border border-night-700 text-white focus:border-primary outline-none">
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-sm font-bold text-night-300 mb-2">شروع</label>
+                    <input type="text" id="editStart" dir="ltr" placeholder="10:00"
+                           class="w-full px-4 py-3 rounded-xl bg-night-900 border border-night-700 text-white focus:border-primary outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-night-300 mb-2">پایان</label>
+                    <input type="text" id="editEnd" dir="ltr" placeholder="11:00"
+                           class="w-full px-4 py-3 rounded-xl bg-night-900 border border-night-700 text-white focus:border-primary outline-none">
+                </div>
+            </div>
+        </div>
+
+        <div class="flex gap-3 mt-6">
+            <button type="button" onclick="saveTimeChanges()"
+                    class="flex-1 bg-gradient-to-l from-primary to-primary-700 text-white font-bold py-3 rounded-xl hover:shadow-lg transition">
+                ذخیره تغییرات
+            </button>
+            <button type="button" onclick="closeEditModal()"
+                    class="px-6 bg-night-700 hover:bg-night-600 text-white font-bold py-3 rounded-xl transition">
+                انصراف
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentAppointmentId = null;
+
+function getCookie(name) {
+    const v = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+    return v ? v.pop() : '';
+}
+
+function changeStatus(appId, newStatus) {
+    const labels = {
+        'confirmed': 'تأیید',
+        'completed': 'انجام شده',
+        'cancelled': 'لغو',
+        'no_show': 'عدم حضور',
+    };
+
+    if (!confirm('آیا مطمئن هستید؟ ' + (labels[newStatus] || newStatus))) return;
+
+    fetch(`/dashboard/appointments/${appId}/status/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'),
+        },
+        body: JSON.stringify({ status: newStatus }),
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.ok) {
+            location.reload();
+        } else {
+            alert('خطا: ' + (data.error || 'ناشناخته'));
+        }
+    })
+    .catch(err => alert('خطای شبکه: ' + err));
+}
+
+function cancelAppointment(appId) {
+    const reason = prompt('دلیل لغو (اختیاری):') || '';
+    fetch(`/dashboard/appointments/${appId}/status/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'),
+        },
+        body: JSON.stringify({ status: 'cancelled', reason: reason }),
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.ok) location.reload();
+        else alert('خطا: ' + data.error);
+    });
+}
+
+function editTime(appId, date, startTime, endTime) {
+    currentAppointmentId = appId;
+    document.getElementById('editDate').value = date;
+    document.getElementById('editStart').value = startTime;
+    document.getElementById('editEnd').value = endTime;
+    document.getElementById('editTimeModal').classList.remove('hidden');
+    document.getElementById('editTimeModal').classList.add('flex');
+}
+
+function closeEditModal() {
+    document.getElementById('editTimeModal').classList.add('hidden');
+    document.getElementById('editTimeModal').classList.remove('flex');
+    currentAppointmentId = null;
+}
+
+function saveTimeChanges() {
+    if (!currentAppointmentId) return;
+
+    const data = {
+        date: document.getElementById('editDate').value.trim(),
+        start_time: document.getElementById('editStart').value.trim(),
+        end_time: document.getElementById('editEnd').value.trim(),
+    };
+
+    fetch(`/dashboard/appointments/${currentAppointmentId}/time/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'),
+        },
+        body: JSON.stringify(data),
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.ok) {
+            location.reload();
+        } else {
+            alert('خطا: ' + (data.error || 'ناشناخته'));
+        }
+    })
+    .catch(err => alert('خطای شبکه: ' + err));
+}
+</script>
+
+{% endblock %}

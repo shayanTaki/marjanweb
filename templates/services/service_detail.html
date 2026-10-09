@@ -1,0 +1,421 @@
+{% extends 'base.html' %}
+{% load fa_numbers %}
+
+{% block title %}{{ service.name }}{% endblock %}
+
+{% block content %}
+
+<!-- Breadcrumb -->
+<section class="py-8 border-b border-night-800">
+    <div class="max-w-7xl mx-auto px-4 lg:px-8">
+        <nav class="flex items-center gap-2 text-sm text-night-400 flex-wrap">
+            <a href="{% url 'home' %}" class="hover:text-primary">خانه</a>
+            <i class="bi bi-chevron-left text-xs"></i>
+            <a href="{% url 'service_list' %}" class="hover:text-primary">خدمات</a>
+            <i class="bi bi-chevron-left text-xs"></i>
+            <a href="{% url 'service_list' %}?category={{ service.category.slug }}" class="hover:text-primary">{{ service.category.name }}</a>
+            <i class="bi bi-chevron-left text-xs"></i>
+            <span class="text-primary font-bold">{{ service.name }}</span>
+        </nav>
+    </div>
+</section>
+
+<!-- Main -->
+<section class="py-12">
+    <div class="max-w-7xl mx-auto px-4 lg:px-8">
+        <div class="grid lg:grid-cols-3 gap-8">
+
+            <!-- Content -->
+            <div class="lg:col-span-2 space-y-6" data-aos="fade-up">
+                <!-- Header card -->
+                <div class="bg-gradient-to-b from-night-800 to-night-900 border border-night-700 rounded-3xl p-8">
+                    <div class="flex flex-wrap items-center gap-3 mb-5">
+                        <span class="inline-flex items-center gap-2 bg-primary/15 border border-primary/30 text-primary px-3 py-1.5 rounded-full text-xs font-bold">
+                            <i class="bi {{ service.category.icon|default:'bi-heart-pulse' }}"></i>
+                            {{ service.category.name }}
+                        </span>
+                        {% if service.is_featured %}
+                        <span class="inline-flex items-center gap-2 bg-amber-500/15 border border-amber-500/30 text-amber-400 px-3 py-1.5 rounded-full text-xs font-bold">
+                            <i class="bi bi-star-fill"></i> ویژه
+                        </span>
+                        {% endif %}
+                    </div>
+
+                    <h1 class="text-3xl md:text-4xl font-black text-white mb-4">{{ service.name }}</h1>
+
+                    <!-- Rating summary inline -->
+                    {% if total_reviews > 0 %}
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="flex items-center gap-1">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= avg_rating %}
+                                    <i class="bi bi-star-fill text-amber-400 text-lg"></i>
+                                {% else %}
+                                    <i class="bi bi-star text-night-600 text-lg"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <span class="text-white font-bold">{{ avg_rating }}</span>
+                        <span class="text-night-400 text-sm">({{ total_reviews }} نظر)</span>
+                    </div>
+                    {% endif %}
+
+                    <p class="text-night-300 leading-8 text-lg">{{ service.short_description }}</p>
+                </div>
+
+                <!-- Description -->
+                <div class="bg-night-800 border border-night-700 rounded-3xl p-8">
+                    <h2 class="text-xl font-black text-white mb-5 flex items-center gap-3">
+                        <span class="w-1.5 h-7 bg-primary rounded-full"></span>
+                        توضیحات کامل
+                    </h2>
+                    <div class="text-night-300 leading-8 whitespace-pre-line">{{ service.description }}</div>
+                </div>
+
+                <!-- Stats cards -->
+                <div class="grid sm:grid-cols-3 gap-4">
+                    <div class="bg-night-800 border border-night-700 rounded-3xl p-6 text-center">
+                        <div class="w-14 h-14 mx-auto rounded-2xl bg-primary/15 border border-primary/30 flex items-center justify-center mb-3">
+                            <i class="bi bi-clock-history text-2xl text-primary"></i>
+                        </div>
+                        <div class="text-xs text-night-400 mb-1">مدت زمان</div>
+                        <div class="font-black text-white">{{ service.duration|duration_fa }}</div>
+                    </div>
+                    <div class="bg-night-800 border border-night-700 rounded-3xl p-6 text-center">
+                        <div class="w-14 h-14 mx-auto rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center mb-3">
+                            <i class="bi bi-shield-check text-2xl text-emerald-400"></i>
+                        </div>
+                        <div class="text-xs text-night-400 mb-1">کیفیت</div>
+                        <div class="font-black text-white">تضمینی</div>
+                    </div>
+                    <div class="bg-night-800 border border-night-700 rounded-3xl p-6 text-center">
+                        <div class="w-14 h-14 mx-auto rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center mb-3">
+                            <i class="bi bi-star-fill text-2xl text-amber-400"></i>
+                        </div>
+                        <div class="text-xs text-night-400 mb-1">امتیاز</div>
+                        <div class="font-black text-white">{{ avg_rating|default:0 }} از ۵</div>
+                    </div>
+                </div>
+
+                <!-- =========================================== -->
+                <!--  REVIEWS SECTION                            -->
+                <!-- =========================================== -->
+                <div id="reviews" class="bg-night-800 border border-night-700 rounded-3xl p-8">
+                    <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+                        <h2 class="text-xl font-black text-white flex items-center gap-3">
+                            <span class="w-1.5 h-7 bg-amber-500 rounded-full"></span>
+                            نظرات کاربران
+                            {% if total_reviews > 0 %}
+                            <span class="text-sm font-normal text-night-400">({{ total_reviews }})</span>
+                            {% endif %}
+                        </h2>
+                    </div>
+
+                    {% if total_reviews == 0 %}
+                    <div class="text-center py-12">
+                        <i class="bi bi-chat-quote text-5xl text-night-600 mb-4"></i>
+                        <p class="text-night-400 mb-2">هنوز نظری برای این سرویس ثبت نشده است.</p>
+                        {% if user.is_authenticated %}
+                            <p class="text-night-500 text-sm">اگر این سرویس را دریافت کرده‌اید، اولین نظر را ثبت کنید!</p>
+                        {% endif %}
+                    </div>
+                    {% else %}
+
+                    <!-- Rating summary -->
+                    <div class="grid md:grid-cols-3 gap-6 p-6 bg-night-900 rounded-2xl mb-8">
+                        <!-- Big average -->
+                        <div class="text-center md:border-l border-night-700 md:pl-6">
+                            <div class="text-6xl font-black text-amber-400 mb-2">{{ avg_rating }}</div>
+                            <div class="flex justify-center gap-1 mb-2">
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= avg_rating %}
+                                        <i class="bi bi-star-fill text-amber-400 text-xl"></i>
+                                    {% else %}
+                                        <i class="bi bi-star text-night-600 text-xl"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <div class="text-sm text-night-400">از {{ total_reviews }} نظر</div>
+                        </div>
+
+                        <!-- Distribution bars -->
+                        <div class="md:col-span-2 space-y-2">
+                            {% for star in "54321" %}
+                            {% with s=star|add:0 %}
+                            <div class="flex items-center gap-3 text-sm">
+                                <span class="text-night-300 w-12 flex items-center gap-1">
+                                    {{ star }} <i class="bi bi-star-fill text-amber-400 text-xs"></i>
+                                </span>
+                                <div class="flex-1 h-2 bg-night-800 rounded-full overflow-hidden">
+                                    {% with count=rating_distribution|default_if_none:0 %}
+                                    {% with total=total_reviews|default:1 %}
+                                    {% with star_key=star|add:0 %}{% endwith %}
+                                    {% endwith %}
+                                    {% endwith %}
+                                </div>
+                                <span class="text-night-400 w-8 text-left" dir="ltr"></span>
+                            </div>
+                            {% endwith %}
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <script>
+                        // Distribution - use server data
+                        document.addEventListener('DOMContentLoaded', () => {
+                            const dist = {{ rating_distribution|safe }};
+                            const total = {{ total_reviews }};
+                            // This is replaced by the server template logic below
+                        });
+                    </script>
+
+                    <!-- JS-rendered bars (dynamic) -->
+                    <div class="hidden">
+                        <!-- Hidden placeholder to avoid double render -->
+                    </div>
+
+                    <!-- Better static bars -->
+                    <div class="md:col-span-2 space-y-2 hidden"></div>
+
+                    <!-- Reviews list -->
+                    <div class="space-y-4">
+                        {% for review in reviews %}
+                        <div class="p-5 bg-night-900 rounded-2xl border border-night-700">
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-primary-700 flex items-center justify-center text-white font-black shrink-0">
+                                    {{ review.user_initial }}
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex flex-wrap items-center gap-3 mb-2">
+                                        <span class="font-bold text-white">{{ review.user.get_full_name|default:review.user.username }}</span>
+                                        {% if review.appointment %}
+                                        <span class="inline-flex items-center gap-1 text-xs text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full">
+                                            <i class="bi bi-patch-check-fill"></i>
+                                            خرید تأیید شده
+                                        </span>
+                                        {% endif %}
+                                        <span class="text-xs text-night-500 mr-auto">
+                                            {{ review.created_at|date:"Y/m/d" }}
+                                        </span>
+                                    </div>
+
+                                    <div class="flex items-center gap-1 mb-3">
+                                        {% for i in "12345" %}
+                                            {% if forloop.counter <= review.rating %}
+                                                <i class="bi bi-star-fill text-amber-400"></i>
+                                            {% else %}
+                                                <i class="bi bi-star text-night-600"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+
+                                    {% if review.comment %}
+                                    <p class="text-night-300 leading-7">{{ review.comment }}</p>
+                                    {% endif %}
+
+                                    {% if review.admin_reply %}
+                                    <div class="mt-4 p-4 bg-primary/5 border-r-4 border-primary rounded-lg">
+                                        <div class="text-xs font-bold text-primary mb-2 flex items-center gap-2">
+                                            <i class="bi bi-reply-fill"></i>
+                                            پاسخ مرکز مشاوره:
+                                        </div>
+                                        <p class="text-sm text-night-200 leading-6">{{ review.admin_reply }}</p>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    {% endif %}
+
+                    <!-- ================= REVIEW FORM ================= -->
+                    {% if user.is_authenticated %}
+                        {% if can_review %}
+                        <div class="mt-8 p-6 bg-gradient-to-br from-primary/10 to-accent/5 border border-primary/30 rounded-2xl">
+                            <h3 class="font-black text-white text-lg mb-2 flex items-center gap-2">
+                                <i class="bi bi-pencil-square text-primary"></i>
+                                ثبت نظر شما
+                            </h3>
+                            <p class="text-sm text-night-400 mb-5">تجربه خود را با دیگران به اشتراک بگذارید</p>
+
+                            <form method="post" action="{% url 'submit_review' service.slug %}" class="space-y-5">
+                                {% csrf_token %}
+
+                                <!-- Star rating -->
+                                <div>
+                                    <label class="block text-sm font-bold text-white mb-3">امتیاز شما</label>
+                                    <div class="flex items-center gap-2" x-data="{ rating: 5, hover: 0 }">
+                                        <template x-for="i in 5" :key="i">
+                                            <button type="button"
+                                                    @click="rating = i"
+                                                    @mouseenter="hover = i"
+                                                    @mouseleave="hover = 0"
+                                                    class="text-4xl transition-transform hover:scale-110"
+                                                    :class="(hover || rating) >= i ? 'text-amber-400' : 'text-night-600'">
+                                                <i :class="(hover || rating) >= i ? 'bi bi-star-fill' : 'bi bi-star'"></i>
+                                            </button>
+                                        </template>
+                                        <span class="mr-3 text-night-400 text-sm">
+                                            (<span x-text="rating"></span> از 5)
+                                        </span>
+                                        <input type="hidden" name="rating" :value="rating">
+                                    </div>
+                                </div>
+
+                                <!-- Comment -->
+                                <div>
+                                    <label class="block text-sm font-bold text-white mb-2">نظر شما (اختیاری)</label>
+                                    <textarea name="comment" rows="4"
+                                              placeholder="تجربه خود را با دیگران به اشتراک بگذارید..."
+                                              class="w-full px-4 py-3 rounded-2xl bg-night-900 border border-night-700 text-white placeholder-night-500 focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition resize-none"></textarea>
+                                </div>
+
+                                <button type="submit"
+                                        class="inline-flex items-center gap-2 bg-gradient-to-l from-primary to-primary-700 hover:shadow-lg hover:shadow-primary/40 text-white font-bold px-6 py-3 rounded-2xl transition-all">
+                                    <i class="bi bi-send-fill"></i>
+                                    ارسال نظر
+                                </button>
+                            </form>
+                        </div>
+                        {% elif user_review %}
+                        <div class="mt-6 p-5 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl">
+                            <div class="flex items-start gap-3">
+                                <i class="bi bi-check-circle-fill text-emerald-400 text-xl"></i>
+                                <div>
+                                    <div class="font-bold text-emerald-300 mb-1">شما قبلاً نظر داده‌اید</div>
+                                    <div class="text-sm text-night-300">
+                                        {% if user_review.status == 'pending' %}
+                                            نظر شما در حال بررسی است و پس از تأیید نمایش داده می‌شود.
+                                        {% elif user_review.status == 'approved' %}
+                                            نظر شما تأیید و منتشر شده است.
+                                        {% elif user_review.status == 'rejected' %}
+                                            متأسفانه نظر شما تأیید نشد.
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="mt-6 p-5 bg-night-900 border border-night-700 rounded-2xl">
+                            <div class="flex items-start gap-3">
+                                <i class="bi bi-info-circle-fill text-night-400 text-xl"></i>
+                                <div>
+                                    <div class="font-bold text-white mb-1">امکان ثبت نظر برای شما وجود ندارد</div>
+                                    <div class="text-sm text-night-400">فقط کاربرانی که این سرویس را دریافت کرده‌اند (نوبت انجام‌شده) می‌توانند نظر بدهند.</div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% else %}
+                    <div class="mt-6 p-5 bg-night-900 border border-night-700 rounded-2xl">
+                        <div class="flex items-start gap-3">
+                            <i class="bi bi-info-circle-fill text-primary text-xl"></i>
+                            <div>
+                                <div class="font-bold text-white mb-1">برای ثبت نظر وارد شوید</div>
+                                <div class="text-sm text-night-400">
+                                    <a href="{% url 'accounts:login' %}" class="text-primary hover:underline">وارد شوید</a>
+                                    یا
+                                    <a href="{% url 'accounts:register' %}" class="text-primary hover:underline">ثبت‌نام کنید</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+            </div>
+
+            <!-- ============================================ -->
+            <!--  SIDEBAR                                     -->
+            <!-- ============================================ -->
+            <div class="lg:col-span-1 space-y-6" data-aos="fade-left">
+                <!-- Price card (sticky) -->
+                <div class="lg:sticky lg:top-24 bg-night-800 border border-night-700 rounded-3xl shadow-2xl overflow-hidden">
+                    <div class="bg-gradient-to-br from-primary to-primary-700 p-6 text-white">
+                        <div class="text-sm opacity-90 mb-1">قیمت این خدمت</div>
+                        <div class="text-3xl font-black">{{ service.price|price_fa }} <span class="text-sm font-normal opacity-80">تومان</span></div>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <a href="{% url 'appointments:book' %}?service={{ service.slug }}"
+                           class="flex items-center justify-center gap-2 bg-gradient-to-l from-primary to-primary-700 text-white font-black py-4 rounded-2xl shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/50 hover:scale-105 transition-all">
+                            <i class="bi bi-calendar2-plus-fill text-xl"></i>
+                            رزرو نوبت
+                        </a>
+
+                        <a href="tel:{{ SITE_PHONE }}"
+                           class="flex items-center justify-center gap-2 bg-night-700 hover:bg-night-600 text-white font-bold py-4 rounded-2xl transition">
+                            <i class="bi bi-telephone-fill"></i>
+                            تماس برای مشاوره
+                        </a>
+
+                        <div class="pt-4 border-t border-night-700 space-y-3 text-sm">
+                            <div class="flex items-center gap-3 text-night-300">
+                                <i class="bi bi-check-circle-fill text-emerald-400"></i>
+                                <span>مشاوره تخصصی و حرفه‌ای</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-night-300">
+                                <i class="bi bi-check-circle-fill text-emerald-400"></i>
+                                <span>محرمانگی کامل اطلاعات</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-night-300">
+                                <i class="bi bi-check-circle-fill text-emerald-400"></i>
+                                <span>پیگیری پس از جلسه</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Share -->
+                <div class="bg-night-800 border border-night-700 rounded-3xl p-6">
+                    <div class="text-sm font-bold text-white mb-3">اشتراک‌گذاری</div>
+                    <div class="flex gap-2">
+                        <a href="#" class="w-10 h-10 rounded-xl bg-night-700 hover:bg-primary text-white flex items-center justify-center transition">
+                            <i class="bi bi-telegram"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-xl bg-night-700 hover:bg-primary text-white flex items-center justify-center transition">
+                            <i class="bi bi-whatsapp"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-xl bg-night-700 hover:bg-primary text-white flex items-center justify-center transition">
+                            <i class="bi bi-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related -->
+        {% if related %}
+        <div class="mt-20" data-aos="fade-up">
+            <h2 class="text-2xl font-black text-white mb-8 flex items-center gap-3">
+                <span class="w-1.5 h-8 bg-accent rounded-full"></span>
+                خدمات مرتبط
+            </h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                {% for item in related %}
+                <a href="{% url 'service_detail' item.slug %}"
+                   class="group bg-gradient-to-b from-night-800 to-night-900 rounded-3xl overflow-hidden border border-night-700 hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/20 transition-all hover:-translate-y-2">
+                    <div class="h-40 bg-gradient-to-br from-primary/20 to-accent/10 overflow-hidden flex items-center justify-center">
+                        {% if item.image %}
+                            <img src="{{ item.image.url }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        {% else %}
+                            <i class="bi {{ item.category.icon|default:'bi-heart-pulse' }} text-6xl text-primary/40"></i>
+                        {% endif %}
+                    </div>
+                    <div class="p-5">
+                        <h3 class="font-bold text-white mb-2 group-hover:text-primary transition">{{ item.name }}</h3>
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-night-400">{{ item.duration|duration_fa }}</span>
+                            <span class="font-bold text-primary">{{ item.price|price_fa }} تومان</span>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+{% load i18n admin_urls static %}
+
+{% block nav-sidebar %}{% include "admin/top_nav.html" %}<script src="{% static 'admin-custom/js/admin.js' %}?v=12"></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main" class="custom-change-form-wrap">
+    <div class="form-page-header">
+        <h1 class="form-page-title">
+            <i class="bi bi-trash-fill" style="color:#f76c6c"></i>
+            حذف {{ object_name }}
+        </h1>
+    </div>
+
+    <div class="custom-fieldset">
+        <div class="custom-fieldset-body" style="padding: 24px;">
+            <p style="color:#F87171;font-size:15px;margin-bottom:20px;">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                آیا از حذف این {{ object_name }} مطمئن هستید؟ این عمل قابل بازگشت نیست.
+            </p>
+
+            <h3 style="color:#f1f5fa;font-size:14px;font-weight:700;margin:20px 0 12px;">موارد زیر همراه با این حذف می‌شوند:</h3>
+            <ul style="list-style:none;padding:0;color:#a9b7cd;">
+                {% for obj in deleted_objects %}
+                    <li style="padding:8px 12px;background:rgba(239,68,68,0.06);border-right:3px solid #f76c6c;border-radius:8px;margin-bottom:6px;">
+                        {{ obj }}
+                    </li>
+                {% endfor %}
+            </ul>
+
+            <form method="post" style="margin-top:24px;">
+                {% csrf_token %}
+                <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                    <button type="submit" style="background:linear-gradient(135deg,#f76c6c,#f76c6c);color:white;font-weight:800;padding:12px 24px;border-radius:12px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px;">
+                        <i class="bi bi-trash-fill"></i> بله، حذف کن
+                    </button>
+                    <a href="{% url opts|admin_urlname:'changelist' %}" style="background:#2f3d5c;color:#dde4ee;font-weight:700;padding:12px 24px;border-radius:12px;text-decoration:none;display:inline-flex;align-items:center;gap:8px;">
+                        <i class="bi bi-x-lg"></i> انصراف
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'admin-custom/js/admin.js' %}?v=11"></script>
+<script>
+    setTimeout(function() {
+        var btn = document.getElementById('adminMenuBtn');
+        var panel = document.getElementById('adminMenuPanel');
+        if (!btn || !panel || btn.dataset.bound === '1') return;
+        btn.dataset.bound = '1';
+        var open = false;
+        btn.addEventListener('click', function(e) {
+            e.preventDefault(); e.stopPropagation();
+            if (open) { panel.classList.remove('is-open'); btn.classList.remove('top-nav-btn-active'); open = false; }
+            else {
+                var rect = btn.getBoundingClientRect();
+                var winW = window.innerWidth;
+                var menuWidth = Math.min(560, winW - 40);
+                var rightEdge = winW - rect.right;
+                var availableLeft = winW - rightEdge - menuWidth - 16;
+                var finalRight = availableLeft < 0 ? Math.max(16, (winW - menuWidth) / 2) : rightEdge;
+                panel.style.top = (rect.bottom + 10) + 'px';
+                panel.style.right = finalRight + 'px';
+                panel.style.left = 'auto';
+                panel.style.width = menuWidth + 'px';
+                panel.classList.add('is-open');
+                btn.classList.add('top-nav-btn-active');
+                open = true;
+            }
+        });
+        document.addEventListener('click', function(e) {
+            if (open && !panel.contains(e.target) && !btn.contains(e.target)) {
+                panel.classList.remove('is-open'); btn.classList.remove('top-nav-btn-active'); open = false;
+            }
+        });
+    }, 100);
+</script>
+{% endblock %}

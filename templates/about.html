@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+
+{% block title %}درباره ما
+<!-- ============ CLINIC GALLERY ============ -->
+<section class="py-20" id="clinic-gallery">
+    <div class="max-w-7xl mx-auto px-4 lg:px-8">
+        <div class="text-center mb-12" data-aos="fade-up">
+            <div class="inline-flex items-center gap-2 bg-accent/10 border border-accent/30 text-accent px-4 py-2 rounded-full text-sm font-bold mb-4">
+                <i class="bi bi-images"></i>
+                <span>فضای کلینیک</span>
+            </div>
+            <h2 class="text-3xl md:text-4xl font-black text-white mb-4">محیطی آرام و امن</h2>
+            <p class="text-night-400 max-w-2xl mx-auto leading-8">
+                فضای کلینیک با رعایت کامل اصول روانشناسی محیطی طراحی شده تا شما در آرامش کامل باشید.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4" data-aos="fade-up">
+            <div class="col-span-2 lg:col-span-2 row-span-2 rounded-3xl overflow-hidden border border-night-700">
+                <img src="/media/clinic/clinic-1.jpg" alt="کلینیک مرجان آرام" class="w-full h-full object-cover hover:scale-110 transition-transform duration-700 min-h-[300px]">
+            </div>
+            <div class="rounded-3xl overflow-hidden border border-night-700">
+                <img src="/media/services/service-1.jpg" alt="" class="w-full h-full object-cover hover:scale-110 transition-transform duration-700 min-h-[150px]">
+            </div>
+            <div class="rounded-3xl overflow-hidden border border-night-700">
+                <img src="/media/services/service-2.jpg" alt="" class="w-full h-full object-cover hover:scale-110 transition-transform duration-700 min-h-[150px]">
+            </div>
+            <div class="col-span-2 rounded-3xl overflow-hidden border border-night-700">
+                <img src="/media/clinic/clinic-2.jpg" alt="" class="w-full h-full object-cover hover:scale-110 transition-transform duration-700 min-h-[150px]">
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block content %}
+
+<!-- Hero -->
+<section class="relative overflow-hidden bg-gradient-to-bl from-night-900 via-night-900 to-night-800 py-20">
+    <div class="absolute top-10 right-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-float"></div>
+    <div class="absolute bottom-10 left-10 w-72 h-72 bg-accent/10 rounded-full blur-3xl animate-float" style="animation-delay:1s"></div>
+
+    <div class="relative max-w-7xl mx-auto px-4 lg:px-8">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+            <div data-aos="fade-left">
+                <nav class="flex items-center gap-2 text-sm text-night-400 mb-6">
+                    <a href="{% url 'home' %}" class="hover:text-primary">خانه</a>
+                    <i class="bi bi-chevron-left text-xs"></i>
+                    <span class="text-primary font-semibold">درباره ما</span>
+                </nav>
+                <div class="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-6">
+                    <i class="bi bi-person-heart"></i>
+                    <span>درباره دکتر مرجان آرام</span>
+                </div>
+                <h1 class="text-4xl md:text-5xl font-black text-dark leading-tight mb-6">
+                    مسیری به سوی <span class="text-primary">آرامش و رشد</span>
+                </h1>
+                <p class="text-lg text-night-300 leading-8 mb-6">
+                    با بیش از ۱۵ سال تجربه در حوزه مشاوره و روانشناسی، همراه شما هستیم تا با آرامش و اطمینان، مسیر بهبودی و رشد شخصی را طی کنید.
+                </p>
+
+                <div class="grid grid-cols-3 gap-4 mt-8">
+                    <div class="bg-night-800 rounded-2xl p-4 text-center shadow-sm border border-night-700">
+                        <div class="text-2xl font-black text-primary">۱۵+</div>
+                        <div class="text-xs text-night-400 mt-1">سال تجربه</div>
+                    </div>
+                    <div class="bg-night-800 rounded-2xl p-4 text-center shadow-sm border border-night-700">
+                        <div class="text-2xl font-black text-accent">۵۰۰۰+</div>
+                        <div class="text-xs text-night-400 mt-1">مشاوره موفق</div>
+                    </div>
+                    <div class="bg-night-800 rounded-2xl p-4 text-center shadow-sm border border-night-700">
+                        <div class="text-2xl font-black text-emerald-500">۹۸٪</div>
+                        <div class="text-xs text-night-400 mt-1">رضایت</div>
+                    </div>
+                </div>
+            </div>
+
+            <div data-aos="fade-right" class="relative">
+                <div class="relative w-full aspect-square max-w-lg mx-auto">
+                    <div class="absolute inset-0 rounded-[3rem] bg-gradient-to-br from-primary to-accent rotate-6"></div>
+                    <div class="absolute inset-0 rounded-[3rem] bg-night-800 border border-night-700 overflow-hidden">
+                        <img src="/media/doctors/marjan-aram-1.jpg" alt="دکتر مرجان آرام"
+                             class="w-full h-full object-cover object-top">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Bio -->
+<section class="py-20">
+    <div class="max-w-4xl mx-auto px-4 lg:px-8">
+        <div class="bg-night-800 rounded-3xl p-10 md:p-14 border border-night-700 shadow-sm" data-aos="fade-up">
+            <h2 class="text-3xl font-black text-dark mb-8 flex items-center gap-3">
+                <span class="w-1.5 h-9 bg-primary rounded-full"></span>
+                بیوگرافی دکتر مرجان آرام
+            </h2>
+
+            <div class="space-y-5 text-night-300 leading-8">
+                <p>
+                    دکتر مرجان آرام، متخصص مشاوره خانواده و روانشناسی بالینی، دارای مدرک دکترای روانشناسی از دانشگاه تهران و عضو رسمی انجمن روانشناسان ایران با شماره نظام ۷۶۴۲۷ هستند.
+                </p>
+                <p>
+                    ایشان با بیش از ۱۵ سال سابقه درخشان، خدمات تخصصی در حوزه‌های مشاوره فردی، مشاوره خانواده، مشاوره قبل از ازدواج، درمان افسردگی و اضطراب، و همچنین مشاوره طلاق را به مراجعین گرامی ارائه می‌دهند.
+                </p>
+                <p>
+                    رویکرد درمانی دکتر آرام بر پایه اصول علمی روانشناسی، احترام به حریم خصوصی و همدلی با مراجع بنا شده است. تاکنون بیش از ۵۰۰۰ مشاوره موفق در کارنامه ایشان به ثبت رسیده است.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-4 mt-10">
+                <div class="bg-gradient-to-br from-primary/20 to-primary/5 rounded-2xl p-6 text-center">
+                    <i class="bi bi-mortarboard-fill text-3xl text-primary mb-3"></i>
+                    <div class="font-bold text-dark">دکترای روانشناسی</div>
+                    <div class="text-xs text-night-400 mt-1">دانشگاه تهران</div>
+                </div>
+                <div class="bg-gradient-to-br from-accent/20 to-accent/10 rounded-2xl p-6 text-center">
+                    <i class="bi bi-award-fill text-3xl text-accent mb-3"></i>
+                    <div class="font-bold text-dark">عضو انجمن روانشناسان</div>
+                    <div class="text-xs text-night-400 mt-1">کد نظام ۷۶۴۲۷</div>
+                </div>
+                <div class="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl p-6 text-center">
+                    <i class="bi bi-patch-check-fill text-3xl text-emerald-500 mb-3"></i>
+                    <div class="font-bold text-dark">مجوز رسمی</div>
+                    <div class="text-xs text-night-400 mt-1">سازمان نظام روانشناسی</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Values -->
+<section class="py-20 bg-gradient-to-b from-night-900 to-night-950">
+    <div class="max-w-7xl mx-auto px-4 lg:px-8">
+        <div class="text-center mb-14" data-aos="fade-up">
+            <h2 class="text-3xl md:text-4xl font-black text-dark mb-4">ارزش‌های ما</h2>
+            <p class="text-night-400">اصولی که همیشه به آن پایبند هستیم</p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-6">
+            <div class="bg-night-800 rounded-3xl p-8 border border-night-700 hover:shadow-xl transition" data-aos="fade-up">
+                <div class="w-16 h-16 rounded-2xl bg-primary-50 flex items-center justify-center mb-5">
+                    <i class="bi bi-shield-lock-fill text-3xl text-primary"></i>
+                </div>
+                <h3 class="font-black text-dark text-lg mb-3">محرمانگی کامل</h3>
+                <p class="text-night-400 text-sm leading-7">
+                    تمام اطلاعات و گفتگوهای شما با بالاترین استانداردهای امنیتی و به‌صورت کاملاً محرمانه محافظت می‌شود.
+                </p>
+            </div>
+
+            <div class="bg-night-800 rounded-3xl p-8 border border-night-700 hover:shadow-xl transition" data-aos="fade-up" data-aos-delay="100">
+                <div class="w-16 h-16 rounded-2xl bg-accent/10 flex items-center justify-center mb-5">
+                    <i class="bi bi-heart-fill text-3xl text-accent"></i>
+                </div>
+                <h3 class="font-black text-dark text-lg mb-3">همدلی و احترام</h3>
+                <p class="text-night-400 text-sm leading-7">
+                    ما بدون قضاوت، با احترام و همدلی به صحبت‌های شما گوش می‌دهیم و در کنار شما هستیم.
+                </p>
+            </div>
+
+            <div class="bg-night-800 rounded-3xl p-8 border border-night-700 hover:shadow-xl transition" data-aos="fade-up" data-aos-delay="200">
+                <div class="w-16 h-16 rounded-2xl bg-emerald-50 flex items-center justify-center mb-5">
+                    <i class="bi bi-graph-up-arrow text-3xl text-emerald-500"></i>
+                </div>
+                <h3 class="font-black text-dark text-lg mb-3">رویکرد علمی</h3>
+                <p class="text-night-400 text-sm leading-7">
+                    استفاده از جدیدترین متدها و روش‌های علمی روانشناسی برای رسیدن به بهترین نتیجه.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="py-16">
+    <div class="max-w-7xl mx-auto px-4 lg:px-8">
+        <div class="relative overflow-hidden rounded-[2rem] bg-gradient-to-bl from-primary via-primary-600 to-primary-700 p-10 md:p-16 text-center" data-aos="zoom-in">
+            <div class="absolute top-0 right-0 w-72 h-72 bg-night-700/30 rounded-full blur-3xl"></div>
+            <div class="relative">
+                <h2 class="text-3xl md:text-4xl font-black text-white mb-4">آماده‌اید اولین قدم را بردارید؟</h2>
+                <p class="text-white/80 mb-8 max-w-2xl mx-auto">همین حالا نوبت خود را رزرو کنید و با آرامش، مسیر بهبودی را شروع کنید.</p>
+                <a href="{% url 'appointments:book' %}" class="inline-flex items-center gap-2 bg-night-800 text-primary font-bold px-8 py-4 rounded-2xl hover:bg-slate-100 transition">
+                    <i class="bi bi-calendar2-check"></i> رزرو نوبت
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

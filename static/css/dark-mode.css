@@ -1,0 +1,240 @@
+/* ============================================================
+   Dark Mode Global Overrides
+   این فایل به‌صورت خودکار المان‌های Tailwind را در حالت تاریک
+   بازنویسی می‌کند. نیازی به تغییر تک‌تک template ها نیست.
+   ============================================================ */
+
+/* Base */
+html, body {
+    background-color: #ffffff;
+    color: #75829a;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+[data-theme="dark"] html,
+[data-theme="dark"] body {
+    background-color: #0a0e1a;
+    color: #dde4ee;
+}
+
+/* ---------- Backgrounds ---------- */
+[data-theme="dark"] .bg-white {
+    background-color: #2f3d5c !important;
+}
+
+[data-theme="dark"] .bg-slate-50 {
+    background-color: #131c2e !important;
+}
+
+[data-theme="dark"] .bg-slate-100 {
+    background-color: #41527a !important;
+}
+
+[data-theme="dark"] .bg-slate-200 {
+    background-color: #5a6b8c !important;
+}
+
+[data-theme="dark"] .bg-white\/70 {
+    background-color: rgba(30, 41, 59, 0.7) !important;
+}
+
+[data-theme="dark"] .bg-white\/90 {
+    background-color: rgba(15, 23, 42, 0.9) !important;
+}
+
+[data-theme="dark"] .bg-primary-50 {
+    background-color: rgba(43, 108, 245, 0.15) !important;
+}
+
+[data-theme="dark"] .bg-primary\/5 {
+    background-color: rgba(43, 108, 245, 0.1) !important;
+}
+
+[data-theme="dark"] .bg-primary\/10 {
+    background-color: rgba(43, 108, 245, 0.2) !important;
+}
+
+[data-theme="dark"] .bg-emerald-50 {
+    background-color: rgba(16, 185, 129, 0.15) !important;
+}
+
+[data-theme="dark"] .bg-amber-50 {
+    background-color: rgba(245, 158, 11, 0.15) !important;
+}
+
+[data-theme="dark"] .bg-red-50 {
+    background-color: rgba(239, 68, 68, 0.15) !important;
+}
+
+[data-theme="dark"] .bg-accent\/10 {
+    background-color: rgba(244, 102, 47, 0.15) !important;
+}
+
+/* ---------- Text Colors ---------- */
+[data-theme="dark"] .text-dark {
+    color: #fafcff !important;
+}
+
+[data-theme="dark"] .text-slate-700 {
+    color: #dde4ee !important;
+}
+
+[data-theme="dark"] .text-slate-600 {
+    color: #a9b7cd !important;
+}
+
+[data-theme="dark"] .text-slate-500 {
+    color: #a9b7cd !important;
+}
+
+[data-theme="dark"] .text-slate-400 {
+    color: #7e8da7 !important;
+}
+
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4,
+[data-theme="dark"] h5,
+[data-theme="dark"] h6 {
+    color: #fafcff;
+}
+
+/* ---------- Borders ---------- */
+[data-theme="dark"] .border-slate-100 {
+    border-color: #41527a !important;
+}
+
+[data-theme="dark"] .border-slate-200 {
+    border-color: #41527a !important;
+}
+
+[data-theme="dark"] .border-slate-200\/60 {
+    border-color: rgba(51, 65, 85, 0.6) !important;
+}
+
+[data-theme="dark"] .divide-slate-100 > * + * {
+    border-color: #41527a !important;
+}
+
+[data-theme="dark"] .divide-slate-50 > * + * {
+    border-color: #2f3d5c !important;
+}
+
+/* ---------- Gradients (Hero sections) ---------- */
+[data-theme="dark"] .bg-gradient-to-bl.from-slate-50 {
+    background: linear-gradient(135deg, #182136 0%, #0a0e1a 50%, rgba(43, 108, 245, 0.08) 100%) !important;
+}
+
+[data-theme="dark"] .bg-gradient-to-b.from-white {
+    background: linear-gradient(180deg, #182136 0%, #0a0e1a 100%) !important;
+}
+
+[data-theme="dark"] .bg-gradient-to-br.from-primary-50 {
+    background: linear-gradient(135deg, rgba(43, 108, 245, 0.15) 0%, rgba(244, 102, 47, 0.1) 100%) !important;
+}
+
+[data-theme="dark"] .bg-gradient-to-br.from-accent\/10 {
+    background: linear-gradient(135deg, rgba(244, 102, 47, 0.15) 0%, rgba(43, 108, 245, 0.1) 100%) !important;
+}
+
+/* ---------- Inputs & Forms ---------- */
+[data-theme="dark"] input,
+[data-theme="dark"] textarea,
+[data-theme="dark"] select {
+    background-color: #2f3d5c !important;
+    color: #fafcff !important;
+    border-color: #41527a !important;
+}
+
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder {
+    color: #7e8da7 !important;
+}
+
+[data-theme="dark"] input:focus,
+[data-theme="dark"] textarea:focus,
+[data-theme="dark"] select:focus {
+    border-color: #2B6CF5 !important;
+    background-color: #2f3d5c !important;
+}
+
+[data-theme="dark"] .form-input {
+    background-color: #2f3d5c !important;
+    color: #fafcff !important;
+    border-color: #41527a !important;
+}
+
+/* ---------- Navbar / Header ---------- */
+[data-theme="dark"] header {
+    border-bottom: 1px solid rgba(51, 65, 85, 0.5);
+}
+
+/* ---------- Footer ---------- */
+footer.bg-dark {
+    background-color: #0a0f1a !important;
+}
+
+/* ---------- Cards ---------- */
+[data-theme="dark"] .shadow-lg,
+[data-theme="dark"] .shadow-xl,
+[data-theme="dark"] .shadow-2xl {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* ---------- Tables ---------- */
+[data-theme="dark"] table thead.bg-slate-50 {
+    background-color: #2f3d5c !important;
+}
+
+[data-theme="dark"] table tr:hover {
+    background-color: rgba(43, 108, 245, 0.05) !important;
+}
+
+/* ---------- Scrollbar ---------- */
+[data-theme="dark"] ::-webkit-scrollbar-track {
+    background: #0a0e1a;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+    background: #41527a;
+    border-color: #0a0e1a;
+}
+
+/* ---------- Alerts / Badges ---------- */
+[data-theme="dark"] .bg-amber-50.border-amber-200 {
+    background-color: rgba(245, 158, 11, 0.15) !important;
+    border-color: rgba(245, 158, 11, 0.4) !important;
+}
+
+[data-theme="dark"] .bg-amber-50.border-amber-200 * {
+    color: #fbbf24 !important;
+}
+
+[data-theme="dark"] .bg-red-50.border-red-200 {
+    background-color: rgba(239, 68, 68, 0.15) !important;
+    border-color: rgba(239, 68, 68, 0.4) !important;
+}
+
+[data-theme="dark"] .bg-red-50.border-red-200 * {
+    color: #f87171 !important;
+}
+
+[data-theme="dark"] .bg-emerald-50.border-emerald-200 {
+    background-color: rgba(16, 185, 129, 0.15) !important;
+    border-color: rgba(16, 185, 129, 0.4) !important;
+}
+
+[data-theme="dark"] .bg-emerald-50.border-emerald-200 * {
+    color: #34d399 !important;
+}
+
+/* ---------- Alpine x-cloak ---------- */
+[x-cloak] { display: none !important; }
+
+/* ---------- Smooth transition ---------- */
+html.transition-theme *,
+html.transition-theme *::before,
+html.transition-theme *::after {
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease !important;
+}

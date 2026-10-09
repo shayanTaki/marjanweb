@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block title %}افزودن نوبت{% endblock %}
+
+{% block content %}
+<section class="min-h-screen bg-night-900 py-8">
+    <div class="max-w-3xl mx-auto px-4">
+
+        <div class="flex items-center gap-3 mb-6">
+            <a href="{% url 'dashboard:calendar' %}" class="w-10 h-10 rounded-xl bg-night-800 hover:bg-night-700 border border-night-700 flex items-center justify-center text-night-300 transition">
+                <i class="bi bi-arrow-right"></i>
+            </a>
+            <h1 class="text-2xl font-black text-white">افزودن نوبت دستی</h1>
+        </div>
+
+        {% if messages %}
+        {% for msg in messages %}
+        <div class="mb-4 p-4 rounded-2xl {% if msg.tags == 'error' %}bg-red-500/10 border border-red-500/30 text-red-400{% else %}bg-emerald-500/10 border border-emerald-500/30 text-emerald-400{% endif %}">
+            {{ msg }}
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        <form method="post" class="bg-gradient-to-br from-night-800 to-night-900 border border-night-700 rounded-3xl p-6 space-y-5">
+            {% csrf_token %}
+
+            <!-- Section: User -->
+            <div>
+                <label class="block text-sm font-bold text-night-300 mb-2">
+                    <i class="bi bi-person-circle text-primary"></i> مراجع
+                </label>
+                <select name="user_id" required class="w-full px-4 py-3 rounded-xl bg-night-900 border border-night-700 text-white focus:border-primary outline-none">
+                    <option value="">-- انتخاب کاربر --</option>
+                    {% for u in users %}
+                    <option value="{{ u.id }}">{{ u.get_full_name|default:u.username }} - {{ u.phone_number|default:u.email }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Section: Service -->
+            <div>
+                <label class="block text-sm font-bold text-night-300 mb-2">
+                    <i class="bi bi-heart-pulse text-primary"></i> خدمت
+                </label>
+                <select name="service_id" required class="w-full px-4 py-3 rounded-xl bg-night-900 border border-night-700 text-white focus:border-primary outline-none">
+                    <option value="">-- انتخاب خدمت --</option>
+                    {% for s in services %}
+                    <option value="{{ s.id }}">{{ s.name }} ({{ s.duration }} دقیقه - {{ s.price|floatformat:0 }} تومان)</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Section: Staff -->
+            <div>
+                <label class="block text-sm font-bold text-night-300 mb-2">
+                    <i class="bi bi-person-badge text-primary"></i> مشاور
+                </label>
+                <select name="staff_id" required class="w-full px-4 py-3 rounded-xl bg-night-900 border border-night-700 text-white focus:border-primary outline-none">
+                    <option value="">-- انتخاب مشاور --</option>
+                    {% for s in staff_list %}
+                    <option value="{{ s.id }}">{{ s.user.get_full_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Section: Date -->
+            <div>
+                <label class="block text-sm font-bold text-night-300 mb-2">
+                    <i class="bi bi-calendar3 text-primary"></i> تاریخ (شمسی)
+                </label>
+                <input type="text" name="date" required dir="ltr"
+                       value="{{ today_jalali.year }}-{{ today_jalali.month|stringformat:'02d' }}-{{ today_jalali.day|stringformat:'02d' }}"
+                       placeholder="1405-07-09"
+                       class="w-full px-4 py-3 rounded-xl bg-night-900 border border-night-700 text-white focus:border-primary outline-none">
+                <div class="text-xs text-night-500 mt-1">فرمت: YYYY-MM-DD (مثال: 1405-07-15)</div>
+            </div>
+
+            <!-- Section: Time -->
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-bold text-night-300 mb-2">
+                        <i class="bi bi-clock text-primary"></i> ساعت شروع
+                    </label>
+                    <input type="text" name="start_time" required dir="ltr" value="10:00" placeholder="10:00"
+                           class="w-full px-4 py-3 rounded-xl bg-night-900 border border-night-700 text-white focus:border-primary outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-night-300 mb-2">
+                        <i class="bi bi-clock-history text-primary"></i> ساعت پایان
+                    </label>
+                    <input type="text" name="end_time" required dir="ltr" value="11:00" placeholder="11:00"
+                           class="w-full px-4 py-3 rounded-xl bg-night-900 border border-night-700 text-white focus:border-primary outline-none">
+                </div>
+            </div>
+
+            <!-- Section: Status -->
+            <div>
+                <label class="block text-sm font-bold text-night-300 mb-2">
+                    <i class="bi bi-info-circle text-primary"></i> وضعیت
+                </label>
+                <select name="status" required class="w-full px-4 py-3 rounded-xl bg-night-900 border border-night-700 text-white focus:border-primary outline-none">
+                    {% for val, label in status_choices %}
+                    <option value="{{ val }}" {% if val == 'confirmed' %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Section: Notes -->
+            <div>
+                <label class="block text-sm font-bold text-night-300 mb-2">
+                    <i class="bi bi-chat-left-text text-primary"></i> یادداشت (اختیاری)
+                </label>
+                <textarea name="notes" rows="3" placeholder="توضیحات اضافی..."
+                          class="w-full px-4 py-3 rounded-xl bg-night-900 border border-night-700 text-white focus:border-primary outline-none resize-none"></textarea>
+            </div>
+
+            <!-- Submit -->
+            <div class="flex gap-3 pt-3">
+                <button type="submit" class="flex-1 bg-gradient-to-l from-emerald-500 to-emerald-600 hover:shadow-lg text-white font-black py-4 rounded-2xl transition">
+                    <i class="bi bi-check-circle-fill"></i> ثبت نوبت
+                </button>
+                <a href="{% url 'dashboard:calendar' %}" class="px-6 bg-night-700 hover:bg-night-600 text-white font-bold py-4 rounded-2xl transition">
+                    انصراف
+                </a>
+            </div>
+        </form>
+
+    </div>
+</section>
+{% endblock %}

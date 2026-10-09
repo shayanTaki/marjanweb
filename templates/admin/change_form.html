@@ -1,0 +1,105 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+{% load i18n admin_urls static admin_modify %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'admin-custom/css/topnav.css' %}">
+<script src="{% static 'admin-custom/js/admin.js' %}?v=12"></script>
+{% endblock %}
+
+{% block bodyclass %}{{ block.super }} app-{{ opts.app_label }} model-{{ opts.model_name }} change-form{% endblock %}
+
+{% block nav-sidebar %}
+    {% include "admin/top_nav.html" %}
+{% endblock %}
+
+{% block content %}
+<div id="content-main" class="custom-change-form-wrap">
+
+    <div class="form-page-header">
+        <div class="form-page-title-group">
+            <h1 class="form-page-title">
+                {% if add %}
+                    <i class="bi bi-plus-circle-fill"></i>
+                    افزودن {{ opts.verbose_name }}
+                {% else %}
+                    <i class="bi bi-pencil-square"></i>
+                    ویرایش {{ opts.verbose_name }}
+                {% endif %}
+            </h1>
+            {% if not add and original %}
+                <div class="form-page-subtitle">{{ original }}</div>
+            {% endif %}
+        </div>
+        <a href="{% url opts|admin_urlname:'changelist' %}" class="btn-ghost">
+            <i class="bi bi-arrow-right"></i>
+            <span>بازگشت به لیست</span>
+        </a>
+    </div>
+
+    <form {% if has_file_field %}enctype="multipart/form-data" {% endif %}{% if form_url %}action="{{ form_url }}" {% endif %}method="post" id="{{ opts.model_name }}_form" novalidate>
+        {% csrf_token %}
+        {% block form_top %}{% endblock %}
+
+        {% if is_popup %}<input type="hidden" name="{{ is_popup_var }}" value="1">{% endif %}
+        {% if to_field %}<input type="hidden" name="{{ to_field_var }}" value="{{ to_field }}">{% endif %}
+
+        {% if save_on_top %}{% block submit_buttons_top %}{% submit_row %}{% endblock %}{% endif %}
+
+        {% if errors %}
+            <div class="form-errors-alert">
+                <div class="form-errors-header">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <span>لطفاً خطاهای زیر را برطرف کنید</span>
+                </div>
+                {{ adminform.form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <div class="form-content">
+            {% block field_sets %}
+                {% for fieldset in adminform %}
+                    <div class="custom-fieldset">
+                        <div class="custom-fieldset-header">
+                            <h2>
+                                <i class="bi bi-folder2-open"></i>
+                                {{ fieldset.name|default:"اطلاعات اصلی" }}
+                            </h2>
+                        </div>
+                        <div class="custom-fieldset-body">
+                            {% include "admin/includes/fieldset.html" %}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endblock %}
+
+            {% block after_field_sets %}{% endblock %}
+
+            {% block inline_field_sets %}
+                {% for inline_admin_formset in inline_admin_formsets %}
+                    {% include inline_admin_formset.opts.template %}
+                {% endfor %}
+            {% endblock %}
+
+            {% block after_related_objects %}{% endblock %}
+        </div>
+
+        <div class="custom-submit-row">
+            {% block submit_buttons_bottom %}{% submit_row %}{% endblock %}
+        </div>
+
+        {% block admin_change_form_document_ready %}
+            <script id="django-admin-form-add-constants" src="{% static 'admin/js/change_form.js' %}"{% if adminform and add %} data-model-name="{{ opts.model_name }}"{% endif %} async></script>
+        {% endblock %}
+
+        {% prepopulated_fields_js %}
+    </form>
+</div>
+
+{# =============================================== #}
+{#  FORCE LOAD admin.js - bypasses block inheritance #}
+{# =============================================== #}
+<script src="{% static 'admin-custom/js/admin.js' %}?v=11"></script>
+
+{% endblock %}

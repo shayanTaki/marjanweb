@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block title %}بلاک کردن زمان{% endblock %}
+
+{% block content %}
+<section class="min-h-screen bg-night-900 py-8">
+    <div class="max-w-4xl mx-auto px-4">
+
+        <div class="flex items-center gap-3 mb-6">
+            <a href="{% url 'dashboard:calendar' %}" class="w-10 h-10 rounded-xl bg-night-800 hover:bg-night-700 border border-night-700 flex items-center justify-center text-night-300 transition">
+                <i class="bi bi-arrow-right"></i>
+            </a>
+            <h1 class="text-2xl font-black text-white">بلاک کردن زمان</h1>
+        </div>
+
+        {% if messages %}
+        {% for msg in messages %}
+        <div class="mb-4 p-4 rounded-2xl {% if msg.tags == 'error' %}bg-red-500/10 border border-red-500/30 text-red-400{% else %}bg-emerald-500/10 border border-emerald-500/30 text-emerald-400{% endif %}">
+            {{ msg }}
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        <div class="grid md:grid-cols-2 gap-6">
+
+            <!-- Form -->
+            <form method="post" class="bg-gradient-to-br from-night-800 to-night-900 border border-night-700 rounded-3xl p-6 space-y-5">
+                {% csrf_token %}
+
+                <h2 class="font-black text-white flex items-center gap-2">
+                    <i class="bi bi-slash-circle text-red-400"></i>
+                    زمان جدید برای بلاک
+                </h2>
+
+                <div>
+                    <label class="block text-sm font-bold text-night-300 mb-2">مشاور</label>
+                    <select name="staff_id" required class="w-full px-4 py-3 rounded-xl bg-night-900 border border-night-700 text-white focus:border-primary outline-none">
+                        <option value="">-- انتخاب --</option>
+                        {% for s in staff_list %}
+                        <option value="{{ s.id }}">{{ s.user.get_full_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-night-300 mb-2">تاریخ (شمسی)</label>
+                    <input type="text" name="date" required dir="ltr"
+                           value="{{ today_jalali.year }}-{{ today_jalali.month|stringformat:'02d' }}-{{ today_jalali.day|stringformat:'02d' }}"
+                           class="w-full px-4 py-3 rounded-xl bg-night-900 border border-night-700 text-white focus:border-primary outline-none">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-sm font-bold text-night-300 mb-2">از ساعت</label>
+                        <input type="text" name="start_time" required dir="ltr" value="12:00"
+                               class="w-full px-4 py-3 rounded-xl bg-night-900 border border-night-700 text-white focus:border-primary outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-night-300 mb-2">تا ساعت</label>
+                        <input type="text" name="end_time" required dir="ltr" value="14:00"
+                               class="w-full px-4 py-3 rounded-xl bg-night-900 border border-night-700 text-white focus:border-primary outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-night-300 mb-2">دلیل (اختیاری)</label>
+                    <input type="text" name="reason" placeholder="مثلاً: مرخصی، جلسه، استراحت..."
+                           class="w-full px-4 py-3 rounded-xl bg-night-900 border border-night-700 text-white focus:border-primary outline-none">
+                </div>
+
+                <button type="submit" class="w-full bg-gradient-to-l from-red-500 to-red-600 hover:shadow-lg text-white font-black py-4 rounded-2xl transition">
+                    <i class="bi bi-slash-circle"></i> بلاک کن
+                </button>
+            </form>
+
+            <!-- Blocked list -->
+            <div class="bg-gradient-to-br from-night-800 to-night-900 border border-night-700 rounded-3xl p-6">
+                <h2 class="font-black text-white flex items-center gap-2 mb-5">
+                    <i class="bi bi-list text-night-400"></i>
+                    زمان‌های مسدود
+                </h2>
+
+                {% if blocked_times %}
+                <div class="space-y-3 max-h-96 overflow-y-auto">
+                    {% for b in blocked_times %}
+                    <div class="p-3 rounded-2xl bg-night-900 border border-night-700">
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <span class="font-bold text-white text-sm">{{ b.staff.user.get_full_name }}</span>
+                        </div>
+                        <div class="text-xs text-night-400" dir="ltr">
+                            <i class="bi bi-calendar3"></i> {{ b.start_datetime|date:"Y-m-d" }}
+                            <br>
+                            <i class="bi bi-clock"></i> {{ b.start_datetime|time:"H:i" }} - {{ b.end_datetime|time:"H:i" }}
+                        </div>
+                        {% if b.reason %}
+                        <div class="text-xs text-night-500 mt-2 italic">"{{ b.reason }}"</div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-12">
+                    <i class="bi bi-calendar-check text-5xl text-night-600 mb-3"></i>
+                    <p class="text-night-400 text-sm">هیچ زمان مسدودی نداری</p>
+                </div>
+                {% endif %}
+            </div>
+
+        </div>
+
+    </div>
+</section>
+{% endblock %}

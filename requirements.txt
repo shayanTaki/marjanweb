@@ -1,0 +1,8 @@
+Django>=5.0,<5.1
+Pillow>=10.0
+python-decouple>=3.8
+django-crispy-forms>=2.1
+crispy-tailwind>=1.0.1
+requests>=2.31
+jdatetime>=5.0
+reportlab>=4.0

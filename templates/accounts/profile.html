@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block title %}پروفایل من{% endblock %}
+{% block content %}
+<section class="py-16">
+    <div class="max-w-3xl mx-auto px-4">
+        <div class="bg-night-800 rounded-3xl shadow-lg border border-night-700 p-8">
+            <div class="flex items-center gap-4 mb-8">
+                {% if user.avatar %}
+                    <img src="{{ user.avatar.url }}" class="w-20 h-20 rounded-2xl object-cover">
+                {% else %}
+                    <div class="w-20 h-20 rounded-2xl bg-primary/10 text-primary flex items-center justify-center text-3xl font-black">
+                        {{ user.first_name|first|default:user.username|first }}
+                    </div>
+                {% endif %}
+                <div>
+                    <h1 class="text-2xl font-black text-dark">{{ user.get_full_name|default:user.username }}</h1>
+                    <p class="text-night-400 text-sm" dir="ltr">{{ user.phone_number|default:user.email }}</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mb-8">
+                <div class="bg-night-900 rounded-2xl p-4">
+                    <div class="text-xs text-night-400 mb-1">نام کاربری</div>
+                    <div class="font-bold">{{ user.username }}</div>
+                </div>
+                <div class="bg-night-900 rounded-2xl p-4">
+                    <div class="text-xs text-night-400 mb-1">کد ملی</div>
+                    <div class="font-bold">{{ user.national_code|default:"-" }}</div>
+                </div>
+                <div class="bg-night-900 rounded-2xl p-4">
+                    <div class="text-xs text-night-400 mb-1">تاریخ تولد</div>
+                    <div class="font-bold">{{ user.birth_date|default:"-" }}</div>
+                </div>
+                <div class="bg-night-900 rounded-2xl p-4">
+                    <div class="text-xs text-night-400 mb-1">ایمیل</div>
+                    <div class="font-bold" dir="ltr">{{ user.email|default:"-" }}</div>
+                </div>
+            </div>
+
+            <div class="flex gap-3">
+                <a href="{% url 'accounts:profile_edit' %}" class="bg-primary text-white font-bold px-6 py-3 rounded-2xl hover:bg-primary-600 transition">ویرایش پروفایل</a>
+                <a href="{% url 'appointments:my_appointments' %}" class="bg-slate-100 text-night-200 font-bold px-6 py-3 rounded-2xl hover:bg-slate-200 transition">نوبت‌های من</a>
+            
+            <!-- Theme Preference -->
+            <div class="mt-6 p-6 bg-night-900 rounded-2xl" x-data>
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h3 class="font-bold text-dark">تنظیمات ظاهری</h3>
+                        <p class="text-xs text-night-400 mt-1">حالت نمایش سایت را انتخاب کنید</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-3">
+                    <button @click="$store.theme.setTheme('light')"
+                            :class="$store.theme.userPref === 'light' ? 'border-primary bg-primary/5' : 'border-night-600'"
+                            class="p-4 rounded-2xl border-2 transition text-center">
+                        <i class="bi bi-sun-fill text-2xl text-amber-500"></i>
+                        <div class="text-sm font-bold mt-2">روشن</div>
+                    </button>
+                    <button @click="$store.theme.setTheme('dark')"
+                            :class="$store.theme.userPref === 'dark' ? 'border-primary bg-primary/5' : 'border-night-600'"
+                            class="p-4 rounded-2xl border-2 transition text-center">
+                        <i class="bi bi-moon-stars-fill text-2xl text-primary"></i>
+                        <div class="text-sm font-bold mt-2">تاریک</div>
+                    </button>
+                    <button @click="$store.theme.setTheme('system')"
+                            :class="$store.theme.userPref === 'system' ? 'border-primary bg-primary/5' : 'border-night-600'"
+                            class="p-4 rounded-2xl border-2 transition text-center">
+                        <i class="bi bi-circle-half text-2xl text-night-400"></i>
+                        <div class="text-sm font-bold mt-2">خودکار</div>
+                    </button>
+                </div>
+            </div>
+</div>
+        </div>
+    </div>
+</section>
+{% endblock %}

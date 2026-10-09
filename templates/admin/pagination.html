@@ -1,0 +1,25 @@
+{% load i18n admin_urls %}
+{% if cl.result_count %}
+<div class="paginator">
+    <span class="paginator-info">
+        <i class="bi bi-info-circle"></i>
+        {{ cl.result_count }} {{ cl.opts.verbose_name_plural }}
+        {% if cl.show_all %}{% endif %}
+    </span>
+    {% if cl.multi_page %}
+    <span class="paginator-pages">
+        {% if cl.page_num > 1 %}
+            <a href="{% url cl.opts|admin_urlname:'changelist' %}{{ cl.get_query_string }}&amp;p={{ cl.page_num|add:"-1" }}" class="page-prev">
+                <i class="bi bi-chevron-right"></i> قبلی
+            </a>
+        {% endif %}
+        <span class="page-current">صفحه {{ cl.page_num }}</span>
+        {% if cl.paginator.num_pages > cl.page_num %}
+            <a href="{% url cl.opts|admin_urlname:'changelist' %}{{ cl.get_query_string }}&amp;p={{ cl.page_num|add:"1" }}" class="page-next">
+                بعدی <i class="bi bi-chevron-left"></i>
+            </a>
+        {% endif %}
+    </span>
+    {% endif %}
+</div>
+{% endif %}

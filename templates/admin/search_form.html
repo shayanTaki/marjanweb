@@ -1,0 +1,25 @@
+{% load i18n static %}
+{% if cl.search_fields %}
+<div id="changelist-search" class="custom-search-form">
+    <form method="get">
+        <label>
+            <i class="bi bi-search"></i>
+            <input type="text" size="40" name="{{ search_var }}" value="{{ cl.query }}"
+                   id="searchbar" autofocus
+                   placeholder="جستجو در {{ cl.opts.verbose_name_plural }}...">
+        </label>
+        <input type="submit" value="جستجو">
+        {% if show_result_count %}
+            <span class="search-count">
+                {{ cl.result_count }} مورد
+                {% if cl.result_count != cl.full_result_count %}
+                    از {{ cl.full_result_count }}
+                {% endif %}
+            </span>
+        {% endif %}
+        {% for pair in cl.params.items %}
+            {% if pair.0 != search_var %}<input type="hidden" name="{{ pair.0 }}" value="{{ pair.1 }}">{% endif %}
+        {% endfor %}
+    </form>
+</div>
+{% endif %}

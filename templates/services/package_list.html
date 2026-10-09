@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load fa_numbers %}
+{% load humanize %}
+
+{% block title %}بسته‌های خدماتی{% endblock %}
+
+{% block content %}
+
+<section class="relative overflow-hidden bg-gradient-to-bl from-night-900 via-night-900 to-night-800 py-20">
+    <div class="absolute top-10 right-10 w-72 h-72 bg-accent/10 rounded-full blur-3xl animate-float"></div>
+    <div class="relative max-w-7xl mx-auto px-4 lg:px-8 text-center" data-aos="fade-up">
+        <nav class="flex items-center justify-center gap-2 text-sm text-night-400 mb-6">
+            <a href="{% url 'home' %}" class="hover:text-primary">خانه</a>
+            <i class="bi bi-chevron-left text-xs"></i>
+            <span class="text-primary font-semibold">بسته‌ها</span>
+        </nav>
+        <div class="inline-flex items-center gap-2 bg-accent/10 text-accent px-4 py-2 rounded-full text-sm font-semibold mb-4">
+            <i class="bi bi-gift-fill"></i>
+            <span>با تخفیف ویژه</span>
+        </div>
+        <h1 class="text-4xl md:text-5xl font-black text-dark mb-4">بسته‌های خدماتی</h1>
+        <p class="text-night-300 max-w-2xl mx-auto leading-8">
+            بسته‌های ویژه با قیمت مناسب و تخفیف‌های فوق‌العاده برای شما عزیزان.
+        </p>
+    </div>
+</section>
+
+<section class="py-16 -mt-8">
+    <div class="max-w-7xl mx-auto px-4 lg:px-8">
+        {% if packages %}
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for package in packages %}
+            <div class="relative bg-night-800 rounded-3xl overflow-hidden border-2 {% if package.is_featured %}border-primary shadow-2xl shadow-primary/20 lg:scale-105{% else %}border-night-700{% endif %} hover:shadow-xl transition-all"
+                 data-aos="fade-up" data-aos-delay="{{ forloop.counter0 }}00">
+
+                {% if package.is_featured %}
+                <div class="absolute top-0 left-0 right-0 bg-gradient-to-l from-primary to-primary-700 text-white text-center py-2 text-sm font-bold z-10">
+                    <i class="bi bi-star-fill"></i> پیشنهاد ویژه
+                </div>
+                {% endif %}
+
+                {% if package.discount_percent > 0 %}
+                <div class="absolute top-4 right-4 z-10 w-16 h-16 rounded-full bg-gradient-to-br from-red-500 to-red-600 text-white flex flex-col items-center justify-center shadow-lg">
+                    <span class="text-lg font-black leading-none">{{ package.discount_percent }}٪</span>
+                    <span class="text-[10px]">تخفیف</span>
+                </div>
+                {% endif %}
+
+                <div class="{% if package.is_featured %}pt-12{% endif %} p-8">
+                    <!-- Icon -->
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/10 flex items-center justify-center mb-5">
+                        <i class="bi bi-box-seam-fill text-3xl text-primary"></i>
+                    </div>
+
+                    <h3 class="text-2xl font-black text-dark mb-3">{{ package.name }}</h3>
+                    <p class="text-night-400 text-sm leading-7 mb-6">
+                        {{ package.short_description|default:package.description|truncatewords:15 }}
+                    </p>
+
+                    <!-- Price -->
+                    <div class="flex items-end gap-3 mb-6">
+                        <div class="text-3xl font-black text-primary">{{ package.price|price_fa }}</div>
+                        {% if package.old_price and package.old_price > package.price %}
+                        <div class="text-night-500 line-through text-sm mb-1">{{ package.old_price|price_fa }}</div>
+                        {% endif %}
+                        <span class="text-xs text-night-400 mb-1.5">تومان</span>
+                    </div>
+
+                    <!-- Features -->
+                    {% if package.features_list %}
+                    <ul class="space-y-2 mb-6">
+                        {% for feature in package.features_list %}
+                        <li class="flex items-start gap-2 text-sm text-night-300">
+                            <i class="bi bi-check-circle-fill text-emerald-500 mt-0.5"></i>
+                            <span>{{ feature }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+
+                    <!-- Duration -->
+                    <div class="flex items-center gap-2 text-sm text-night-400 mb-6 pb-6 border-b border-night-700">
+                        <i class="bi bi-clock-history text-primary"></i>
+                        <span>مدت اعتبار: {{ package.duration_days|to_fa }} روز</span>
+                    </div>
+
+                    <!-- CTA -->
+                    <div class="flex gap-3">
+                        <a href="{% url 'package_detail' package.slug %}"
+                           class="flex-1 text-center bg-slate-100 hover:bg-slate-200 text-night-200 font-bold py-3 rounded-2xl transition text-sm">
+                            جزئیات
+                        </a>
+                        <a href="{% url 'appointments:book' %}?package={{ package.slug }}"
+                           class="flex-1 text-center bg-gradient-to-l from-primary to-primary-700 hover:shadow-lg hover:shadow-primary/30 text-white font-bold py-3 rounded-2xl transition text-sm">
+                            <i class="bi bi-cart-plus"></i> خرید
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-20 bg-night-800 rounded-3xl border border-dashed border-night-600">
+            <i class="bi bi-box text-6xl text-slate-300 mb-4"></i>
+            <h3 class="text-xl font-bold text-night-300 mb-2">هنوز بسته‌ای ثبت نشده است</h3>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,299 @@
+/* ============================================================
+   Marjan Aram - Dark Theme
+   Single theme, no toggle
+   ============================================================ */
+
+* { -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; }
+body {
+    font-family: 'Vazirmatn', system-ui, sans-serif;
+    background-color: #0f1527;
+    color: #f1f5fa;
+    min-height: 100vh;
+}
+
+/* Background gradient */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(ellipse 60% 40% at 80% 10%, rgba(59, 130, 246, 0.15), transparent),
+        radial-gradient(ellipse 50% 30% at 20% 90%, rgba(245, 158, 11, 0.08), transparent);
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: #0f1527; }
+::-webkit-scrollbar-thumb { background: #41527a; border-radius: 10px; border: 2px solid #0f1527; }
+::-webkit-scrollbar-thumb:hover { background: #5c93f0; }
+
+::selection { background: #5c93f0; color: white; }
+
+/* Smooth transitions */
+a, button { transition: all 0.25s ease; }
+
+/* x-cloak */
+[x-cloak] { display: none !important; }
+
+/* Line clamp */
+.line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+.line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* Cards */
+.card-dark {
+    background: linear-gradient(180deg, #212c4a 0%, #0F1626 100%);
+    border: 1px solid #2f3d5c;
+    border-radius: 24px;
+    transition: all 0.3s ease;
+}
+.card-dark:hover {
+    border-color: rgba(59, 130, 246, 0.5);
+    box-shadow: 0 20px 40px -10px rgba(59, 130, 246, 0.3);
+    transform: translateY(-4px);
+}
+
+/* Inputs */
+.form-input {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border-radius: 1rem;
+    border: 1px solid #41527a;
+    background: #0F1626;
+    color: #f1f5fa;
+    font-family: inherit;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+}
+.form-input:focus {
+    outline: none;
+    border-color: #5c93f0;
+    background: #212c4a;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+}
+.form-input::placeholder { color: #7e8da7; }
+
+/* Override Tailwind backgrounds to work in dark theme */
+.bg-white { background-color: #212c4a !important; }
+.bg-slate-50 { background-color: #0F1626 !important; }
+.bg-slate-100 { background-color: #2f3d5c !important; }
+.bg-slate-200 { background-color: #41527a !important; }
+
+.text-dark { color: #FFFFFF !important; }
+.text-slate-700 { color: #f1f5fa !important; }
+.text-slate-600 { color: #dde4ee !important; }
+.text-slate-500 { color: #a9b7cd !important; }
+.text-slate-400 { color: #7e8da7 !important; }
+
+.border-slate-100 { border-color: #2f3d5c !important; }
+.border-slate-200 { border-color: #41527a !important; }
+.divide-slate-100 > * + * { border-color: #2f3d5c !important; }
+.divide-slate-50 > * + * { border-color: #212c4a !important; }
+
+/* Buttons - Primary */
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.9rem 1.75rem;
+    border-radius: 1rem;
+    font-weight: 800;
+    color: white;
+    background: linear-gradient(135deg, #5c93f0, #4a7ce0);
+    box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4);
+    transition: all 0.25s ease;
+}
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 35px -5px rgba(59, 130, 246, 0.6);
+}
+
+/* Accent glow for CTA */
+@keyframes glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.4), 0 10px 25px -5px rgba(59, 130, 246, 0.4); }
+    50%      { box-shadow: 0 0 40px rgba(59, 130, 246, 0.8), 0 10px 25px -5px rgba(59, 130, 246, 0.6); }
+}
+
+/* Floating animation */
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-20px); }
+}
+.animate-float { animation: float 6s ease-in-out infinite; }
+
+/* Mobile body padding for sticky booking bar */
+@media (max-width: 1023px) {
+    body { padding-bottom: 100px; }
+}
+
+/* ============================================================
+   MAIN SITE - Beautification
+   ============================================================ */
+
+/* Body background with subtle radial gradients */
+body::before {
+    background:
+        radial-gradient(ellipse 60% 40% at 80% 10%, rgba(92, 147, 240, 0.12), transparent),
+        radial-gradient(ellipse 50% 30% at 20% 90%, rgba(251, 192, 45, 0.06), transparent),
+        radial-gradient(ellipse 40% 40% at 50% 50%, rgba(167, 139, 250, 0.04), transparent) !important;
+}
+
+/* Card dark with better gradient */
+.card-dark {
+    background: linear-gradient(160deg, #212C4A 0%, #182136 100%) !important;
+    border-color: #2F3D5C !important;
+}
+
+.card-dark:hover {
+    border-color: rgba(92, 147, 240, 0.45) !important;
+    box-shadow: 0 25px 50px -12px rgba(92, 147, 240, 0.3) !important;
+    transform: translateY(-6px);
+}
+
+/* Buttons with better glow */
+.btn-primary {
+    background: linear-gradient(135deg, #5C93F0, #4A7CE0) !important;
+    box-shadow: 0 10px 28px -8px rgba(92, 147, 240, 0.5), inset 0 1px 0 rgba(255,255,255,0.15) !important;
+}
+
+.btn-primary:hover {
+    box-shadow: 0 15px 40px -8px rgba(92, 147, 240, 0.7), inset 0 1px 0 rgba(255,255,255,0.25) !important;
+}
+
+/* Inputs with better contrast */
+.form-input {
+    background: #182136 !important;
+    border-color: #2F3D5C !important;
+    color: #F1F5FA !important;
+}
+
+.form-input:focus {
+    border-color: #5C93F0 !important;
+    box-shadow: 0 0 0 4px rgba(92, 147, 240, 0.15) !important;
+    background: #212C4A !important;
+}
+
+/* Enhance glow animation */
+@keyframes glow {
+    0%, 100% {
+        box-shadow: 0 0 24px rgba(92, 147, 240, 0.4), 0 10px 28px -8px rgba(92, 147, 240, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 48px rgba(92, 147, 240, 0.7), 0 10px 28px -8px rgba(92, 147, 240, 0.7);
+    }
+}
+
+/* ============================================================
+   OVERRIDE - Force all hero/light sections to dark
+   ============================================================ */
+
+/* Any leftover light gradients */
+.bg-gradient-to-bl.from-slate-50,
+.bg-gradient-to-b.from-white,
+.bg-gradient-to-br.from-primary-50,
+.bg-gradient-to-br.from-slate-50,
+.bg-gradient-to-br.from-accent\/10 {
+    background-image: linear-gradient(160deg, #182136 0%, #0F1527 100%) !important;
+}
+
+/* Any bg-white class that escaped */
+.bg-white:not(.btn-primary):not([class*="hover:bg-primary"]) {
+    background-color: #182136 !important;
+}
+
+.bg-slate-50,
+.bg-slate-100 {
+    background-color: #0F1527 !important;
+}
+
+.bg-slate-200 {
+    background-color: #212C4A !important;
+}
+
+/* Ensure hero sections have proper background */
+section[class*="from-slate-50"],
+section[class*="from-white"],
+section[class*="via-white"] {
+    background: linear-gradient(160deg, #182136 0%, #0F1527 60%, #212C4A 100%) !important;
+}
+
+/* Fix the empty/washed-out areas */
+.rounded-3xl.bg-gradient-to-bl {
+    background: linear-gradient(160deg, #212C4A 0%, #182136 100%) !important;
+}
+
+/* Booking page hero */
+section.bg-gradient-to-bl {
+    background: linear-gradient(160deg, #182136 0%, #0F1527 50%, #212C4A 100%) !important;
+}
+
+/* Make sure text is readable on all backgrounds */
+h1, h2, h3, h4, h5, h6 {
+    color: #F1F5FA;
+}
+
+p {
+    color: #DDE4EE;
+}
+
+.text-slate-600,
+.text-slate-700 {
+    color: #DDE4EE !important;
+}
+
+.text-slate-500 {
+    color: #A9B7CD !important;
+}
+
+/* ============================================================
+   CALENDAR IMPROVEMENTS
+   ============================================================ */
+
+/* Booking page calendar - make available days POP */
+.booking-calendar-day {
+    position: relative;
+    transition: all 0.2s;
+}
+
+/* Available days - green with strong visual */
+.calendar-day-available {
+    background: linear-gradient(135deg, #2ED8A3, #10B981) !important;
+    color: white !important;
+    font-weight: 900 !important;
+    box-shadow: 0 4px 12px rgba(46, 216, 163, 0.4);
+}
+
+.calendar-day-available:hover {
+    transform: scale(1.08);
+    box-shadow: 0 8px 20px rgba(46, 216, 163, 0.6);
+}
+
+/* Selected day - blue */
+.calendar-day-selected {
+    background: linear-gradient(135deg, #5C93F0, #4A7CE0) !important;
+    color: white !important;
+    box-shadow: 0 0 0 3px rgba(92, 147, 240, 0.3), 0 8px 20px rgba(92, 147, 240, 0.5);
+    transform: scale(1.05);
+}
+
+/* Today marker */
+.calendar-day-today {
+    ring: 2px solid #FBC02D;
+    box-shadow: inset 0 0 0 2px #FBC02D;
+}
+
+/* Disabled days - clearly muted */
+.calendar-day-disabled {
+    color: #41527A !important;
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+/* Booking wizard progress */
+.booking-wizard .step-badge {
+    box-shadow: 0 8px 20px rgba(92, 147, 240, 0.4);
+}

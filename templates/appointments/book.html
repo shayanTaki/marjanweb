@@ -1,0 +1,522 @@
+{% extends 'base.html' %}
+{% load fa_numbers %}
+
+{% block title %}رزرو نوبت{% block sticky_booking %}{% endblock %}
+{% endblock %}
+
+{% block content %}
+<section class="min-h-screen bg-gradient-to-bl from-night-900 via-night-900 to-night-800 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 py-10">
+    <div class="max-w-6xl mx-auto px-4 lg:px-8">
+
+        <!-- Header -->
+        <div class="text-center mb-10" data-aos="fade-up">
+            <div class="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-4">
+                <i class="bi bi-calendar2-check"></i>
+                <span>سیستم رزرو آنلاین</span>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-black text-dark dark:text-white mb-3">رزرو نوبت مشاوره</h1>
+            <p class="text-night-400 dark:text-night-500">در ۳ مرحله ساده نوبت خود را رزرو کنید</p>
+        </div>
+
+        {% if not has_staff %}
+        <div class="bg-amber-50 border-2 border-amber-200 rounded-3xl p-6 mb-6">
+            <div class="flex items-start gap-4">
+                <div class="w-14 h-14 rounded-2xl bg-amber-100 flex items-center justify-center shrink-0">
+                    <i class="bi bi-exclamation-triangle-fill text-2xl text-amber-500"></i>
+                </div>
+                <div>
+                    <h3 class="font-black text-amber-800 mb-1">هنوز مشاوری ثبت نشده است!</h3>
+                    <p class="text-sm text-amber-700 leading-7">ابتدا از پنل ادمین پرسنل تعریف کنید.</p>
+                    <div class="flex flex-wrap gap-2 mt-3">
+                        <a href="/admin/accounts/customuser/add/" target="_blank" class="inline-flex items-center gap-2 bg-amber-500 text-white font-bold px-4 py-2 rounded-xl text-sm">۱. کاربر دکتر</a>
+                        <a href="/admin/appointments/staff/add/" target="_blank" class="inline-flex items-center gap-2 bg-amber-500 text-white font-bold px-4 py-2 rounded-xl text-sm">۲. پرسنل</a>
+                        <a href="/admin/appointments/workinghours/add/" target="_blank" class="inline-flex items-center gap-2 bg-amber-500 text-white font-bold px-4 py-2 rounded-xl text-sm">۳. ساعات کاری</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if has_staff and has_services %}
+        <div x-data="bookingWizard({
+                serviceId: {{ preselected_service.id|default:0 }},
+                serviceName: '{% if preselected_service %}{{ preselected_service.name|escapejs }}{% endif %}',
+                serviceDuration: {{ preselected_service.duration|default:0 }},
+                servicePrice: {{ preselected_service.price|default:0 }},
+                staffId: {{ default_staff.id|default:0 }}
+             })"
+             x-init="init()"
+             x-cloak
+             class="space-y-6">
+
+            <!-- Progress Bar -->
+            <div class="bg-night-800 dark:bg-slate-800 rounded-3xl border border-night-700 dark:border-slate-700 shadow-sm p-6">
+                <div class="flex items-center justify-between max-w-3xl mx-auto">
+                    <template x-for="(label, idx) in ['انتخاب سرویس', 'تاریخ و ساعت', 'تأیید نهایی']" :key="idx">
+                        <div class="flex items-center flex-1">
+                            <div class="flex flex-col items-center">
+                                <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg transition-all"
+                                     :class="step >= (idx + 1) ? 'bg-gradient-to-br from-primary to-primary-700 text-white shadow-lg shadow-primary/30' : 'bg-slate-100 dark:bg-slate-700 text-night-500'">
+                                    <template x-if="step > (idx + 1)">
+                                        <i class="bi bi-check-lg text-xl"></i>
+                                    </template>
+                                    <template x-if="step <= (idx + 1)">
+                                        <span x-text="toFa(idx + 1)"></span>
+                                    </template>
+                                </div>
+                                <span class="mt-2 text-xs font-semibold hidden sm:block"
+                                      :class="step >= (idx + 1) ? 'text-primary' : 'text-night-500'"
+                                      x-text="label"></span>
+                            </div>
+                            <div x-show="idx < 2" class="flex-1 h-1 mx-2 rounded-full transition-all"
+                                 :class="step > (idx + 1) ? 'bg-primary' : 'bg-slate-100 dark:bg-slate-700'"></div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <!-- ============ STEP 1: SERVICE ============ -->
+            <div x-show="step === 1">
+                <div class="bg-night-800 dark:bg-slate-800 rounded-3xl border border-night-700 dark:border-slate-700 shadow-sm p-6 md:p-8">
+                    <h2 class="text-xl font-black text-dark dark:text-white mb-6 flex items-center gap-3">
+                        <span class="w-1.5 h-7 bg-primary rounded-full"></span>
+                        یک سرویس انتخاب کنید
+                    </h2>
+
+                    <div class="grid md:grid-cols-2 gap-4">
+                        {% for service in services %}
+                        <button type="button"
+                                @click="selectService({{ service.id }}, '{{ service.name|escapejs }}', {{ service.duration }}, {{ service.price }})"
+                                class="group text-right p-5 rounded-2xl border-2 transition-all hover:shadow-lg"
+                                :class="serviceId === {{ service.id }} ? 'border-primary bg-primary/5 shadow-lg shadow-primary/10' : 'border-night-700 dark:border-slate-700 hover:border-primary/30'">
+                            <div class="flex items-start gap-4">
+                                <div class="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 transition"
+                                     :class="serviceId === {{ service.id }} ? 'bg-gradient-to-br from-primary to-primary-700 text-white' : 'bg-primary-50 dark:bg-primary/20 text-primary'">
+                                    <i class="bi {{ service.category.icon|default:'bi-heart-pulse' }} text-2xl"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="font-bold text-dark dark:text-white mb-1 truncate">{{ service.name }}</div>
+                                    <div class="text-xs text-night-400 dark:text-night-500 mb-3 line-clamp-2">{{ service.short_description|default:service.description|truncatewords:12 }}</div>
+                                    <div class="flex items-center gap-3 text-xs flex-wrap">
+                                        <span class="text-night-400 dark:text-night-500 inline-flex items-center gap-1">
+                                            <i class="bi bi-clock text-primary"></i>
+                                            {{ service.duration|duration_fa }}
+                                        </span>
+                                        <span class="font-bold text-primary">{{ service.price|price_fa }} تومان</span>
+                                    </div>
+                                </div>
+                                <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0"
+                                     :class="serviceId === {{ service.id }} ? 'border-primary bg-primary' : 'border-slate-300 dark:border-slate-600'">
+                                    <template x-if="serviceId === {{ service.id }}">
+                                        <i class="bi bi-check text-white text-xs"></i>
+                                    </template>
+                                </div>
+                            </div>
+                        </button>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Staff selection -->
+                    <div class="mt-8 pt-8 border-t border-night-700 dark:border-slate-700">
+                        <h3 class="font-bold text-dark dark:text-white mb-4">انتخاب مشاور</h3>
+                        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            {% for s in staffs %}
+                            <button type="button"
+                                    @click="staffId = {{ s.id }}; staffName = '{{ s.user.get_full_name|default:s.user.username|escapejs }}'"
+                                    class="p-4 rounded-2xl border-2 text-right transition-all flex items-center gap-3"
+                                    :class="staffId === {{ s.id }} ? 'border-primary bg-primary/5' : 'border-night-700 dark:border-slate-700 hover:border-primary/30'">
+                                {% if s.user.avatar %}
+                                    <img src="{{ s.user.avatar.url }}" class="w-12 h-12 rounded-full object-cover border-2 border-primary/30 shrink-0">
+                                {% else %}
+                                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-primary-700 text-white flex items-center justify-center font-black text-lg shrink-0">
+                                        {{ s.user.first_name|first|default:s.user.username|first }}
+                                    </div>
+                                {% endif %}
+                                <div class="flex-1 min-w-0">
+                                    <div class="font-bold text-sm text-dark dark:text-white truncate">{{ s.user.get_full_name|default:s.user.username }}</div>
+                                    <div class="text-xs text-night-400 dark:text-night-500 flex items-center gap-1 mt-0.5">
+                                        <i class="bi bi-briefcase text-primary"></i>
+                                        {{ s.experience_years|years_fa }}
+                                    </div>
+                                </div>
+                                <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0"
+                                     :class="staffId === {{ s.id }} ? 'border-primary bg-primary' : 'border-slate-300 dark:border-slate-600'">
+                                    <template x-if="staffId === {{ s.id }}">
+                                        <i class="bi bi-check text-white text-[10px]"></i>
+                                    </template>
+                                </div>
+                            </button>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="mt-8 flex justify-end">
+                        <button type="button"
+                                @click="goToStep(2)"
+                                :disabled="!serviceId || !staffId"
+                                :class="(!serviceId || !staffId) ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-xl hover:shadow-primary/30'"
+                                class="inline-flex items-center gap-2 bg-gradient-to-l from-primary to-primary-700 text-white font-bold px-8 py-3.5 rounded-2xl transition-all">
+                            مرحله بعد
+                            <i class="bi bi-arrow-left"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ STEP 2: DATE & TIME ============ -->
+            <div x-show="step === 2">
+                <div class="grid lg:grid-cols-5 gap-6">
+                    <!-- Calendar -->
+                    <div class="lg:col-span-3 bg-night-800 dark:bg-slate-800 rounded-3xl border border-night-700 dark:border-slate-700 shadow-sm p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-xl font-black text-dark dark:text-white">انتخاب تاریخ</h2>
+                            <div class="flex items-center gap-2">
+                                <button type="button" @click="changeMonth(-1)" class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 flex items-center justify-center transition">
+                                    <i class="bi bi-chevron-right"></i>
+                                </button>
+                                <div class="font-bold text-sm px-3 min-w-[140px] text-center" x-text="monthLabel"></div>
+                                <button type="button" @click="changeMonth(1)" class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 flex items-center justify-center transition">
+                                    <i class="bi bi-chevron-left"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div x-show="loadingCalendar" class="text-center py-12">
+                            <div class="inline-block w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+                        </div>
+
+                        <div x-show="!loadingCalendar">
+                            <div class="grid grid-cols-7 gap-1 mb-2">
+                                <template x-for="d in ['ش', 'ی', 'د', 'س', 'چ', 'پ', 'ج']" :key="d">
+                                    <div class="text-center text-xs font-bold text-night-500 py-2" x-text="d"></div>
+                                </template>
+                            </div>
+                            <div class="grid grid-cols-7 gap-1">
+                                <template x-for="i in firstWeekdayOffset" :key="'e' + i">
+                                    <div></div>
+                                </template>
+                                <template x-for="day in calendarDays" :key="day.day">
+                                    <button type="button"
+                                            @click="if (day.available) { selectDate(day.jdate_str, day.day); }"
+                                            :disabled="!day.available"
+                                            :class="{
+                                                'bg-gradient-to-br from-primary to-primary-700 text-white shadow-lg shadow-primary/30': selectedDate === day.jdate_str,
+                                                'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 cursor-pointer': day.available && selectedDate !== day.jdate_str,
+                                                'text-slate-300 dark:text-night-300 cursor-not-allowed': !day.available,
+                                                'ring-2 ring-accent': day.is_today && selectedDate !== day.jdate_str
+                                            }"
+                                            class="aspect-square rounded-xl text-sm font-bold transition-all flex items-center justify-center">
+                                        <span x-text="toFa(day.day)"></span>
+                                    </button>
+                                </template>
+                            </div>
+                            <div class="mt-6 pt-6 border-t border-night-700 dark:border-slate-700 flex items-center justify-center gap-6 text-xs flex-wrap">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-4 h-4 rounded bg-emerald-100 dark:bg-emerald-900/40"></div>
+                                    <span class="text-night-300 dark:text-night-500">قابل رزرو</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-4 h-4 rounded bg-primary"></div>
+                                    <span class="text-night-300 dark:text-night-500">انتخاب شده</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-4 h-4 rounded bg-slate-100 dark:bg-slate-700"></div>
+                                    <span class="text-night-300 dark:text-night-500">غیرقابل رزرو</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Time slots -->
+                    <div class="lg:col-span-2 bg-night-800 dark:bg-slate-800 rounded-3xl border border-night-700 dark:border-slate-700 shadow-sm p-6">
+                        <h2 class="text-xl font-black text-dark dark:text-white mb-2">انتخاب ساعت</h2>
+                        <p class="text-sm text-night-400 dark:text-night-500 mb-6" x-text="selectedDateDisplay || 'ابتدا تاریخ را انتخاب کنید'"></p>
+
+                        <div x-show="!selectedDate" class="text-center py-12">
+                            <i class="bi bi-clock-history text-5xl text-slate-200 dark:text-night-300 mb-3"></i>
+                            <p class="text-night-500 text-sm">تاریخی انتخاب نشده است</p>
+                        </div>
+
+                        <div x-show="selectedDate && loadingSlots" class="text-center py-8">
+                            <div class="inline-block w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+                        </div>
+
+                        <div x-show="selectedDate && !loadingSlots">
+                            <template x-if="slots.length === 0">
+                                <div class="text-center py-12">
+                                    <i class="bi bi-x-circle text-5xl text-slate-200 dark:text-night-300 mb-3"></i>
+                                    <p class="text-night-500 text-sm">زمانی در این روز موجود نیست</p>
+                                </div>
+                            </template>
+                            <div class="grid grid-cols-3 gap-2 max-h-96 overflow-y-auto">
+                                <template x-for="slot in slots" :key="slot.start">
+                                    <button type="button"
+                                            @click="selectTime(slot)"
+                                            :class="selectedTime && selectedTime.start === slot.start ? 'bg-gradient-to-br from-primary to-primary-700 text-white shadow-lg' : 'bg-night-900 dark:bg-slate-700 hover:bg-primary/10 text-night-200 dark:text-slate-200'"
+                                            class="py-2.5 px-2 rounded-xl text-sm font-bold transition-all">
+                                        <span x-text="toFa(slot.start)"></span>
+                                    </button>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 flex justify-between gap-3">
+                    <button type="button" @click="step = 1"
+                            class="inline-flex items-center gap-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-night-200 dark:text-slate-200 font-bold px-8 py-3.5 rounded-2xl transition">
+                        <i class="bi bi-arrow-right"></i>
+                        مرحله قبل
+                    </button>
+                    <button type="button"
+                            @click="goToStep(3)"
+                            :disabled="!selectedDate || !selectedTime"
+                            :class="(!selectedDate || !selectedTime) ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-xl hover:shadow-primary/30'"
+                            class="inline-flex items-center gap-2 bg-gradient-to-l from-primary to-primary-700 text-white font-bold px-8 py-3.5 rounded-2xl transition-all">
+                        مرحله بعد
+                        <i class="bi bi-arrow-left"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ============ STEP 3: CONFIRM ============ -->
+            <div x-show="step === 3">
+                <div class="grid lg:grid-cols-5 gap-6">
+                    <div class="lg:col-span-2 bg-night-800 dark:bg-slate-800 rounded-3xl border border-night-700 dark:border-slate-700 shadow-sm p-6">
+                        <h2 class="text-xl font-black text-dark dark:text-white mb-6">خلاصه نوبت</h2>
+                        <div class="space-y-4">
+                            <div class="flex items-start gap-3 p-4 bg-primary-50 dark:bg-primary/10 rounded-2xl">
+                                <div class="w-10 h-10 rounded-xl bg-night-800 dark:bg-slate-700 flex items-center justify-center text-primary shrink-0">
+                                    <i class="bi bi-heart-pulse"></i>
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <div class="text-xs text-night-400 dark:text-night-500">سرویس</div>
+                                    <div class="font-bold text-dark dark:text-white text-sm truncate" x-text="serviceName"></div>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3 p-4 bg-night-900 dark:bg-slate-700/50 rounded-2xl">
+                                <div class="w-10 h-10 rounded-xl bg-night-800 dark:bg-slate-700 flex items-center justify-center text-night-400 shrink-0">
+                                    <i class="bi bi-person-badge"></i>
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <div class="text-xs text-night-400 dark:text-night-500">مشاور</div>
+                                    <div class="font-bold text-dark dark:text-white text-sm truncate" x-text="staffName || 'هر کدام در دسترس'"></div>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3 p-4 bg-night-900 dark:bg-slate-700/50 rounded-2xl">
+                                <div class="w-10 h-10 rounded-xl bg-night-800 dark:bg-slate-700 flex items-center justify-center text-night-400 shrink-0">
+                                    <i class="bi bi-calendar3"></i>
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <div class="text-xs text-night-400 dark:text-night-500">تاریخ</div>
+                                    <div class="font-bold text-dark dark:text-white text-sm" x-text="selectedDateDisplay"></div>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3 p-4 bg-night-900 dark:bg-slate-700/50 rounded-2xl">
+                                <div class="w-10 h-10 rounded-xl bg-night-800 dark:bg-slate-700 flex items-center justify-center text-night-400 shrink-0">
+                                    <i class="bi bi-clock"></i>
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <div class="text-xs text-night-400 dark:text-night-500">ساعت</div>
+                                    <div class="font-bold text-dark dark:text-white text-sm" x-text="selectedTime ? toFa(selectedTime.start) + ' - ' + toFa(selectedTime.end) : ''"></div>
+                                </div>
+                            </div>
+                            <div class="pt-4 border-t border-night-700 dark:border-slate-700">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-night-400 dark:text-night-500">مدت زمان:</span>
+                                    <span class="font-bold text-dark dark:text-white" x-text="toFa(serviceDuration) + ' دقیقه'"></span>
+                                </div>
+                                <div class="flex justify-between items-center mt-3">
+                                    <span class="text-night-400 dark:text-night-500">مبلغ قابل پرداخت:</span>
+                                    <span class="font-black text-primary text-lg" x-text="formatPrice(servicePrice) + ' تومان'"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-3 bg-night-800 dark:bg-slate-800 rounded-3xl border border-night-700 dark:border-slate-700 shadow-sm p-6 md:p-8">
+                        <h2 class="text-xl font-black text-dark dark:text-white mb-6">تأیید نهایی</h2>
+
+                        <form method="post" action="{% url 'appointments:confirm' %}" class="space-y-6">
+                            {% csrf_token %}
+                            <input type="hidden" name="service_id" :value="serviceId">
+                            <input type="hidden" name="staff_id" :value="staffId">
+                            <input type="hidden" name="date" :value="selectedDate">
+                            <input type="hidden" name="start_time" :value="selectedTime?.start">
+                            <input type="hidden" name="end_time" :value="selectedTime?.end">
+
+                            <div>
+                                <label class="block text-sm font-semibold text-dark dark:text-white mb-3">
+                                    توضیحات اضافی <span class="text-night-500 font-normal">(اختیاری)</span>
+                                </label>
+                                <textarea name="notes" rows="4" placeholder="اگر نکته یا توضیح خاصی دارید اینجا بنویسید..."
+                                          class="w-full px-4 py-3 rounded-2xl border border-night-600 dark:border-slate-600 bg-night-900 dark:bg-slate-700 text-dark dark:text-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition resize-none"></textarea>
+                            </div>
+
+                            <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-2xl p-4 flex gap-3">
+                                <i class="bi bi-info-circle-fill text-amber-500 text-xl shrink-0 mt-0.5"></i>
+                                <div class="text-sm text-amber-800 dark:text-amber-300 leading-6">
+                                    پس از ثبت، نوبت شما در وضعیت «در انتظار تأیید» قرار می‌گیرد.
+                                </div>
+                            </div>
+
+                            <div class="flex flex-col sm:flex-row gap-3">
+                                <button type="button" @click="step = 2"
+                                        class="flex-1 inline-flex items-center justify-center gap-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-night-200 dark:text-slate-200 font-bold py-4 rounded-2xl transition">
+                                    <i class="bi bi-arrow-right"></i>
+                                    ویرایش
+                                </button>
+                                <button type="submit"
+                                        class="flex-[2] inline-flex items-center justify-center gap-2 bg-gradient-to-l from-primary to-primary-700 hover:shadow-xl hover:shadow-primary/30 text-white font-bold py-4 rounded-2xl transition-all">
+                                    <i class="bi bi-check2-circle text-xl"></i>
+                                    ثبت نهایی نوبت
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+</section>
+
+<script>
+function bookingWizard(initial) {
+    return {
+        step: 1,
+        serviceId: initial.serviceId || 0,
+        serviceName: initial.serviceName || '',
+        serviceDuration: initial.serviceDuration || 0,
+        servicePrice: initial.servicePrice || 0,
+        staffId: initial.staffId || 0,
+        staffName: '',
+        selectedDate: null,
+        selectedDateDisplay: '',
+        selectedTime: null,
+        calendarYear: {{ today_jalali_year|default:1405 }},
+        calendarMonth: {{ today_jalali_month|default:7 }},
+        monthLabel: '',
+        calendarDays: [],
+        firstWeekdayOffset: 0,
+        slots: [],
+        loadingCalendar: false,
+        loadingSlots: false,
+
+        init() {
+            if (this.serviceId && this.staffId) {
+                this.$nextTick(() => this.loadCalendar());
+            }
+        },
+
+        toFa(n) {
+            if (n === null || n === undefined || n === '') return '';
+            return String(n).replace(/[0-9]/g, function(d) {
+                return '\u06f0\u06f1\u06f2\u06f3\u06f4\u06f5\u06f6\u06f7\u06f8\u06f9'[d];
+            });
+        },
+
+        formatPrice(p) {
+            if (!p && p !== 0) return '';
+            // جداکننده هزارگان + ارقام فارسی
+            var formatted = Number(p).toLocaleString('en-US');
+            return this.toFa(formatted);
+        },
+
+        selectService(id, name, duration, price) {
+            this.serviceId = id;
+            this.serviceName = name;
+            this.serviceDuration = duration;
+            this.servicePrice = price;
+        },
+
+        goToStep(n) {
+            if (n === 2) {
+                if (!this.serviceId) { alert('لطفاً یک سرویس انتخاب کنید.'); return; }
+                if (!this.staffId) { alert('لطفاً یک مشاور انتخاب کنید.'); return; }
+                this.step = 2;
+                this.$nextTick(() => this.loadCalendar());
+            } else if (n === 3) {
+                if (!this.selectedDate || !this.selectedTime) {
+                    alert('لطفاً تاریخ و ساعت را انتخاب کنید.');
+                    return;
+                }
+                this.step = 3;
+            }
+        },
+
+        async loadCalendar() {
+            if (!this.serviceId || !this.staffId) return;
+            this.loadingCalendar = true;
+            try {
+                const url = '/appointments/api/calendar/?service_id=' + this.serviceId
+                    + '&staff_id=' + this.staffId
+                    + '&year=' + this.calendarYear
+                    + '&month=' + this.calendarMonth;
+                const res = await fetch(url);
+                const data = await res.json();
+                if (!res.ok || data.error) throw new Error(data.error || 'خطا در بارگذاری تقویم');
+
+                this.calendarYear = data.year;
+                this.calendarMonth = data.month;
+                this.monthLabel = data.month_name + ' ' + this.toFa(data.year);
+                this.firstWeekdayOffset = data.first_weekday;
+                this.calendarDays = data.days;
+                this.slots = [];
+                this.selectedDate = null;
+                this.selectedTime = null;
+                this.selectedDateDisplay = '';
+
+                // Debug: count available days
+                const availCount = data.days.filter(d => d.available).length;
+                console.log('[Calendar] Loaded', data.days.length, 'days,', availCount, 'available');
+            } catch (e) {
+                console.error(e);
+                this.monthLabel = 'خطا';
+                alert(e.message || 'خطا در بارگذاری تقویم');
+            } finally {
+                this.loadingCalendar = false;
+            }
+        },
+
+        changeMonth(delta) {
+            let m = this.calendarMonth + delta;
+            let y = this.calendarYear;
+            if (m > 12) { m = 1; y++; }
+            if (m < 1) { m = 12; y--; }
+            this.calendarYear = y;
+            this.calendarMonth = m;
+            this.loadCalendar();
+        },
+
+        async selectDate(jdateStr) {
+            this.selectedDate = jdateStr;
+            this.selectedTime = null;
+            this.loadingSlots = true;
+            this.slots = [];
+
+            try {
+                const url = '/appointments/api/slots/?service_id=' + this.serviceId
+                    + '&staff_id=' + this.staffId
+                    + '&date=' + jdateStr;
+                const res = await fetch(url);
+                const data = await res.json();
+                if (!res.ok || data.error) throw new Error(data.error || 'خطا');
+                this.selectedDateDisplay = this.toFa(data.jalali_display);
+                this.slots = data.slots;
+            } catch (e) {
+                console.error(e);
+                this.selectedDateDisplay = 'خطا';
+            } finally {
+                this.loadingSlots = false;
+            }
+        },
+
+        selectTime(slot) {
+            this.selectedTime = slot;
+        },
+    }
+}
+</script>
+{% endblock %}

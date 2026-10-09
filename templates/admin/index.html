@@ -1,0 +1,351 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+{% load i18n static %}
+
+{% block bodyclass %}{{ block.super }} custom-dashboard{% endblock %}
+{% block breadcrumbs %}{% endblock %}
+{% block content_title %}{% endblock %}
+
+{% block content %}
+<div id="content-main" class="custom-dashboard-wrap">
+
+    {% if admin_stats_error %}
+        <div class="custom-alert custom-alert-error">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <span>خطا در بارگذاری آمار: {{ admin_stats_error }}</span>
+        </div>
+    {% endif %}
+
+    {% if admin_stats %}
+    <!-- ================= KPI CARDS ================= -->
+    <div class="kpi-grid">
+        <div class="kpi-card kpi-blue">
+            <div class="kpi-icon"><i class="bi bi-people-fill"></i></div>
+            <div class="kpi-body">
+                <div class="kpi-label">کاربران</div>
+                <div class="kpi-value">{{ admin_stats.users }}</div>
+                <div class="kpi-sub">
+                    <i class="bi bi-arrow-up"></i>
+                    {{ admin_stats.users_week }} کاربر جدید این هفته
+                </div>
+            </div>
+        </div>
+
+        <div class="kpi-card kpi-emerald">
+            <div class="kpi-icon"><i class="bi bi-calendar2-check-fill"></i></div>
+            <div class="kpi-body">
+                <div class="kpi-label">کل نوبت‌ها</div>
+                <div class="kpi-value">{{ admin_stats.appointments }}</div>
+                <div class="kpi-sub">
+                    <span class="dot"></span>
+                    {{ admin_stats.appointments_today }} نوبت امروز
+                </div>
+            </div>
+        </div>
+
+        <div class="kpi-card kpi-amber">
+            <div class="kpi-icon"><i class="bi bi-hourglass-split"></i></div>
+            <div class="kpi-body">
+                <div class="kpi-label">در انتظار تأیید</div>
+                <div class="kpi-value">{{ admin_stats.appointments_pending }}</div>
+                <div class="kpi-sub">
+                    <a href="/admin/appointments/appointment/?status__exact=pending" class="kpi-link">
+                        بررسی کن <i class="bi bi-arrow-left"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="kpi-card kpi-primary">
+            <div class="kpi-icon"><i class="bi bi-currency-dollar"></i></div>
+            <div class="kpi-body">
+                <div class="kpi-label">درآمد کل</div>
+                <div class="kpi-value">{{ admin_stats.revenue|floatformat:0 }}</div>
+                <div class="kpi-sub">
+                    این ماه: {{ admin_stats.revenue_month|floatformat:0 }} تومان
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= SECONDARY STATS ================= -->
+    <div class="mini-stats">
+        <div class="mini-stat">
+            <i class="bi bi-star-fill"></i>
+            <div>
+                <div class="mini-value">{{ admin_stats.reviews }}</div>
+                <div class="mini-label">نظرات</div>
+            </div>
+        </div>
+        <div class="mini-stat">
+            <i class="bi bi-chat-square-text-fill"></i>
+            <div>
+                <div class="mini-value">{{ admin_stats.reviews_pending }}</div>
+                <div class="mini-label">نظر در انتظار</div>
+            </div>
+        </div>
+        <div class="mini-stat">
+            <i class="bi bi-grid-3x3-gap-fill"></i>
+            <div>
+                <div class="mini-value">{{ admin_stats.services }}</div>
+                <div class="mini-label">سرویس</div>
+            </div>
+        </div>
+        <div class="mini-stat">
+            <i class="bi bi-person-badge-fill"></i>
+            <div>
+                <div class="mini-value">{{ admin_stats.staff }}</div>
+                <div class="mini-label">پرسنل</div>
+            </div>
+        </div>
+        <div class="mini-stat">
+            <i class="bi bi-newspaper"></i>
+            <div>
+                <div class="mini-value">{{ admin_stats.articles }}</div>
+                <div class="mini-label">مقاله</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= CHART ================= -->
+    <div class="custom-card chart-card">
+        <div class="custom-card-header">
+            <h2><i class="bi bi-graph-up-arrow"></i> نوبت‌های ۷ روز اخیر</h2>
+            <span class="custom-badge">آخرین هفته</span>
+        </div>
+        <div class="custom-card-body">
+            {% if admin_chart_data %}
+                {% with total=0 %}
+                <canvas id="appointmentsChart" height="80"></canvas>
+                {% endwith %}
+            {% else %}
+                <div class="chart-empty">
+                    <i class="bi bi-graph-up"></i>
+                    <p>هنوز داده‌ای برای نمایش وجود ندارد</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ================= RECENT + REVIEWS ================= -->
+    <div class="two-col-grid">
+
+        <div class="custom-card">
+            <div class="custom-card-header">
+                <h2><i class="bi bi-clock-history"></i> آخرین نوبت‌ها</h2>
+                <a href="/admin/appointments/appointment/" class="custom-link">
+                    همه <i class="bi bi-arrow-left"></i>
+                </a>
+            </div>
+            <div class="custom-card-body no-pad">
+                {% if admin_recent_appointments %}
+                <table class="custom-table">
+                    <tbody>
+                    {% for app in admin_recent_appointments %}
+                        <tr>
+                            <td>
+                                <div class="row-user">
+                                    <div class="row-avatar">{{ app.user.first_name|first|default:app.user.username|first }}</div>
+                                    <div>
+                                        <div class="row-title">{{ app.user.get_full_name|default:app.user.username }}</div>
+                                        <div class="row-sub">{{ app.service.name }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-left">
+                                <span class="status-badge status-{{ app.status }}">
+                                    {{ app.get_status_display }}
+                                </span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                    <div class="empty-state">
+                        <i class="bi bi-inbox"></i>
+                        <p>هنوز نوبتی ثبت نشده</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="custom-card">
+            <div class="custom-card-header">
+                <h2><i class="bi bi-star-fill"></i> نظرات در انتظار</h2>
+                <a href="/admin/services/review/?status__exact=pending" class="custom-link">
+                    همه <i class="bi bi-arrow-left"></i>
+                </a>
+            </div>
+            <div class="custom-card-body no-pad">
+                {% if admin_recent_reviews %}
+                <table class="custom-table">
+                    <tbody>
+                    {% for r in admin_recent_reviews %}
+                        <tr>
+                            <td>
+                                <div class="row-user">
+                                    <div class="row-avatar row-avatar-amber">{{ r.user.first_name|first|default:r.user.username|first }}</div>
+                                    <div>
+                                        <div class="row-title">{{ r.user.get_full_name|default:r.user.username }}</div>
+                                        <div class="row-sub">{{ r.service.name|truncatechars:30 }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-left">
+                                <div class="star-row">
+                                    {% for i in "12345" %}
+                                        {% if forloop.counter <= r.rating %}
+                                            <i class="bi bi-star-fill"></i>
+                                        {% else %}
+                                            <i class="bi bi-star star-empty"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                    <div class="empty-state">
+                        <i class="bi bi-chat-square"></i>
+                        <p>نظر جدیدی وجود ندارد</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= QUICK ACTIONS ================= -->
+    <div class="custom-card">
+        <div class="custom-card-header">
+            <h2><i class="bi bi-lightning-charge-fill"></i> دسترسی سریع</h2>
+        </div>
+        <div class="custom-card-body">
+            <div class="quick-actions">
+                <a href="/admin/appointments/appointment/add/" class="quick-action qa-blue">
+                    <i class="bi bi-calendar-plus"></i>
+                    <span>نوبت جدید</span>
+                </a>
+                <a href="/admin/accounts/customuser/add/" class="quick-action qa-emerald">
+                    <i class="bi bi-person-plus"></i>
+                    <span>کاربر جدید</span>
+                </a>
+                <a href="/admin/services/service/add/" class="quick-action qa-purple">
+                    <i class="bi bi-plus-square"></i>
+                    <span>سرویس جدید</span>
+                </a>
+                <a href="/admin/services/review/" class="quick-action qa-amber">
+                    <i class="bi bi-star"></i>
+                    <span>مدیریت نظرات</span>
+                </a>
+                <a href="/admin/payments/payment/" class="quick-action qa-emerald">
+                    <i class="bi bi-credit-card"></i>
+                    <span>پرداخت‌ها</span>
+                </a>
+                <a href="/" target="_blank" class="quick-action qa-slate">
+                    <i class="bi bi-box-arrow-up-right"></i>
+                    <span>مشاهده سایت</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= ALL MODELS ================= -->
+    <div class="custom-card apps-card">
+        <div class="custom-card-header">
+            <h2><i class="bi bi-grid-fill"></i> همه مدل‌ها</h2>
+        </div>
+        <div class="custom-card-body">
+            <div class="apps-grid">
+                {% for app in app_list %}
+                    {% for model in app.models %}
+                    <a href="{% if model.admin_url %}{{ model.admin_url }}{% else %}#{% endif %}" class="app-item">
+                        <div class="app-icon">
+                            {% if 'کاربر' in model.name %}<i class="bi bi-people"></i>
+                            {% elif 'نوبت' in model.name %}<i class="bi bi-calendar-check"></i>
+                            {% elif 'سرویس' in model.name %}<i class="bi bi-heart-pulse"></i>
+                            {% elif 'پرداخت' in model.name %}<i class="bi bi-credit-card"></i>
+                            {% elif 'نظر' in model.name %}<i class="bi bi-star"></i>
+                            {% elif 'مقاله' in model.name %}<i class="bi bi-newspaper"></i>
+                            {% elif 'پرسنل' in model.name %}<i class="bi bi-person-badge"></i>
+                            {% elif 'بسته' in model.name %}<i class="bi bi-box-seam"></i>
+                            {% elif 'دسته' in model.name %}<i class="bi bi-tags"></i>
+                            {% elif 'ساعت' in model.name %}<i class="bi bi-clock"></i>
+                            {% elif 'تعطیل' in model.name %}<i class="bi bi-calendar-x"></i>
+                            {% elif 'پکیج' in model.name %}<i class="bi bi-box"></i>
+                            {% else %}<i class="bi bi-circle-square"></i>
+                            {% endif %}
+                        </div>
+                        <div class="app-name">{{ model.name }}</div>
+                    </a>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Chart.js -->
+<script src="{% static 'vendor/chartjs/chart.min.js' %}"></script>
+<script>
+(function() {
+    const canvas = document.getElementById('appointmentsChart');
+    if (!canvas) return;
+
+    const data = {{ admin_chart_data|default:"[]"|safe }};
+    if (!data || data.length === 0) return;
+
+    new Chart(canvas, {
+        type: 'line',
+        data: {
+            labels: data.map(function(d) { return d.label; }),
+            datasets: [{
+                label: 'نوبت',
+                data: data.map(function(d) { return d.value; }),
+                borderColor: '#5c93f0',
+                backgroundColor: 'rgba(59,130,246,0.1)',
+                fill: true,
+                tension: 0.4,
+                pointRadius: 4,
+                pointBackgroundColor: '#5c93f0',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                borderWidth: 3,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#182136',
+                    titleColor: '#fafcff',
+                    bodyColor: '#a9b7cd',
+                    borderColor: '#5c93f0',
+                    borderWidth: 1,
+                    padding: 12,
+                    titleFont: { family: 'Vazirmatn' },
+                    bodyFont: { family: 'Vazirmatn' },
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { color: '#7e8da7', precision: 0, font: { family: 'Vazirmatn' } },
+                    grid: { color: 'rgba(148,163,184,0.1)' }
+                },
+                x: {
+                    ticks: { color: '#7e8da7', font: { family: 'Vazirmatn' } },
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+})();
+</script>
+{% endblock %}

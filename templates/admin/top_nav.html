@@ -1,0 +1,135 @@
+{% load i18n %}
+<nav class="top-nav" id="customTopNav">
+    <div class="top-nav-inner">
+        <div class="top-nav-left">
+            <a href="{% url 'admin:index' %}" class="top-nav-home" title="داشبورد">
+                <i class="bi bi-grid-1x2-fill"></i>
+            </a>
+            <button type="button" class="top-nav-btn" id="adminMenuBtn" onclick="window.__toggleAdminMenu && window.__toggleAdminMenu(event)">
+                <i class="bi bi-list"></i>
+                <span>منو</span>
+                <i class="bi bi-chevron-down top-nav-chevron"></i>
+            </button>
+            <a href="/admin/appointments/appointment/add/" class="top-nav-btn top-nav-btn-quick">
+                <i class="bi bi-calendar-plus"></i><span>نوبت جدید</span>
+            </a>
+            <a href="/admin/accounts/customuser/add/" class="top-nav-btn top-nav-btn-quick">
+                <i class="bi bi-person-plus"></i><span>کاربر جدید</span>
+            </a>
+        </div>
+        <div class="top-nav-right">
+            <a href="/" target="_blank" class="top-nav-icon" title="سایت"><i class="bi bi-box-arrow-up-right"></i></a>
+            <a href="{% url 'admin:logout' %}" class="top-nav-icon top-nav-icon-logout" title="خروج"><i class="bi bi-box-arrow-right"></i></a>
+        </div>
+    </div>
+</nav>
+
+<!-- Dropdown panel (فقط یک بار) -->
+<div class="top-nav-menu" id="adminMenuPanel" style="display:none;">
+    {% for app in app_list %}
+        {% if app.models %}
+        <div class="top-nav-menu-section">
+            <div class="top-nav-menu-title">
+                <i class="bi {% if 'نوبت' in app.name %}bi-calendar-check-fill{% elif 'کاربر' in app.name %}bi-people-fill{% elif 'خدمات' in app.name %}bi-heart-pulse-fill{% elif 'پرداخت' in app.name %}bi-credit-card-fill{% else %}bi-folder-fill{% endif %}"></i>
+                <span>{{ app.name }}</span>
+            </div>
+            <div class="top-nav-menu-items">
+                {% for model in app.models %}
+                <a href="{% if model.admin_url %}{{ model.admin_url }}{% else %}#{% endif %}" class="top-nav-menu-item">
+                    <span class="tn-mi-icon"><i class="bi bi-circle-square"></i></span>
+                    <span class="tn-mi-label">{{ model.name }}</span>
+                    {% if model.add_url %}<span class="tn-mi-add"><i class="bi bi-plus-lg"></i></span>{% endif %}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    {% endfor %}
+</div>
+
+<!-- INLINE SCRIPT - bulletproof, no external dependency -->
+<script>
+(function() {
+    'use strict';
+
+    // ===== Global toggle function (accessible from onclick) =====
+    window.__toggleAdminMenu = function(e) {
+        if (e) { e.preventDefault(); e.stopPropagation(); }
+        var panel = document.getElementById('adminMenuPanel');
+        var btn = document.getElementById('adminMenuBtn');
+        if (!panel || !btn) return;
+
+        var isOpen = panel.style.display === 'block';
+        if (isOpen) {
+            panel.style.display = 'none';
+            btn.classList.remove('top-nav-btn-active');
+        } else {
+            // Position panel
+            var r = btn.getBoundingClientRect();
+            panel.style.position = 'fixed';
+            panel.style.zIndex = '999999';
+            if (window.innerWidth <= 768) {
+                panel.style.top = 'auto';
+                panel.style.bottom = '12px';
+                panel.style.left = '12px';
+                panel.style.right = '12px';
+            } else {
+                panel.style.top = (r.bottom + 10) + 'px';
+                panel.style.left = 'auto';
+                panel.style.right = Math.max(12, window.innerWidth - r.right) + 'px';
+                panel.style.bottom = 'auto';
+            }
+            panel.style.display = 'block';
+            btn.classList.add('top-nav-btn-active');
+        }
+    };
+
+    function setup() {
+        var topNav = document.getElementById('customTopNav');
+        var panel = document.getElementById('adminMenuPanel');
+        var btn = document.getElementById('adminMenuBtn');
+        if (!topNav || !panel || !btn) return;
+
+        // Move topNav to top of body (out of #main)
+        if (topNav.parentElement !== document.body) {
+            document.body.insertBefore(topNav, document.body.firstChild);
+        }
+        // Move panel to body (avoid any clipping)
+        if (panel.parentElement !== document.body) {
+            document.body.appendChild(panel);
+        }
+
+        // Outside click closes
+        document.addEventListener('click', function(e) {
+            if (panel.style.display !== 'block') return;
+            if (panel.contains(e.target) || btn.contains(e.target)) return;
+            panel.style.display = 'none';
+            btn.classList.remove('top-nav-btn-active');
+        });
+
+        // Escape closes
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && panel.style.display === 'block') {
+                panel.style.display = 'none';
+                btn.classList.remove('top-nav-btn-active');
+            }
+        });
+
+        // Clicking a link closes
+        panel.querySelectorAll('a').forEach(function(a) {
+            a.addEventListener('click', function() {
+                panel.style.display = 'none';
+                btn.classList.remove('top-nav-btn-active');
+            });
+        });
+
+        console.log('[Admin] Menu ready (inline)');
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', setup);
+    } else {
+        setup();
+    }
+})();
+</script>

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}خطای سرور{% endblock %}
+{% block content %}
+<section class="min-h-[70vh] flex items-center justify-center py-16">
+    <div class="text-center max-w-lg mx-auto px-4">
+        <div class="text-[10rem] font-black text-red-500/20 leading-none mb-4">۵۰۰</div>
+        <h1 class="text-3xl font-black text-dark mb-4">خطای داخلی سرور</h1>
+        <p class="text-night-400 leading-8 mb-8">متأسفانه مشکلی پیش آمده است. لطفاً بعداً دوباره تلاش کنید.</p>
+        <a href="{% url 'home' %}" class="inline-flex items-center gap-2 bg-primary text-white font-bold px-8 py-4 rounded-2xl hover:bg-primary-600 transition">
+            <i class="bi bi-house"></i>
+            <span>بازگشت به صفحه اصلی</span>
+        </a>
+    </div>
+</section>
+{% endblock %}

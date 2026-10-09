@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}پرداخت‌های من{% endblock %}
+
+{% block content %}
+<section class="min-h-screen bg-night-900 py-10">
+    <div class="max-w-5xl mx-auto px-4">
+        <h1 class="text-3xl font-black text-dark mb-2">پرداخت‌های من</h1>
+        <p class="text-night-400 mb-8">تاریخچه تراکنش‌های شما</p>
+
+        {% if payments %}
+        <div class="bg-night-800 rounded-3xl border border-night-700 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-night-900 border-b">
+                        <tr class="text-xs font-bold text-night-400">
+                            <th class="text-right py-4 px-4">کد پیگیری</th>
+                            <th class="text-right py-4 px-4">مبلغ</th>
+                            <th class="text-right py-4 px-4">وضعیت</th>
+                            <th class="text-right py-4 px-4">تاریخ</th>
+                            <th class="text-right py-4 px-4"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-night-700">
+                        {% for p in payments %}
+                        <tr class="hover:bg-night-900">
+                            <td class="py-4 px-4 text-sm font-mono" dir="ltr">{{ p.tracking_code }}</td>
+                            <td class="py-4 px-4 font-bold">{{ p.amount|intcomma }} ت</td>
+                            <td class="py-4 px-4">
+                                <span class="inline-flex items-center gap-1 text-xs font-bold px-3 py-1 rounded-full
+                                             bg-{{ p.status_color }}-50 text-{{ p.status_color }}-700">
+                                    {{ p.get_status_display }}
+                                </span>
+                            </td>
+                            <td class="py-4 px-4 text-sm">{{ p.created_at|date:"Y/m/d H:i" }}</td>
+                            <td class="py-4 px-4">
+                                <a href="{% url 'payments:payment_detail' p.tracking_code %}" class="text-primary font-bold text-sm hover:underline">
+                                    جزئیات
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% else %}
+        <div class="bg-night-800 rounded-3xl border border-dashed border-night-600 p-12 text-center">
+            <i class="bi bi-receipt text-6xl text-slate-300 mb-4"></i>
+            <h3 class="font-bold text-night-300 mb-2">پرداختی ثبت نشده است</h3>
+            <p class="text-night-500 text-sm">پس از رزرو نوبت و پرداخت، اینجا نمایش داده می‌شود.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

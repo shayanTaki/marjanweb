@@ -1,0 +1,98 @@
+<footer class="bg-night-950 border-t border-night-800 mt-24 relative overflow-hidden">
+    <div class="absolute -top-32 -right-32 w-96 h-96 bg-primary/10 rounded-full blur-3xl"></div>
+    <div class="absolute -bottom-32 -left-32 w-96 h-96 bg-accent/5 rounded-full blur-3xl"></div>
+
+    <!-- Newsletter -->
+    <div class="relative border-b border-night-800">
+        <div class="max-w-7xl mx-auto px-4 lg:px-8 py-12">
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div>
+                    <h3 class="text-2xl font-black text-white mb-2">عضویت در خبرنامه</h3>
+                    <p class="text-night-400 text-sm">جدیدترین مقالات و تخفیف‌ها را در ایمیل خود دریافت کنید.</p>
+                </div>
+                <form method="post" action="{% url 'newsletter_subscribe' %}" class="flex gap-3">
+                    {% csrf_token %}
+                    <input type="email" name="email" required placeholder="example@mail.com"
+                           class="flex-1 px-5 py-3.5 rounded-2xl bg-night-900 border border-night-700 text-white placeholder-night-500 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition"
+                           dir="ltr">
+                    <button type="submit" class="bg-gradient-to-l from-primary to-primary-700 text-white font-bold px-6 py-3.5 rounded-2xl hover:shadow-lg hover:shadow-primary/40 transition">
+                        <i class="bi bi-send"></i>
+                        <span class="hidden sm:inline mr-2">عضویت</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="relative max-w-7xl mx-auto px-4 lg:px-8 py-16">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+
+            <div class="lg:col-span-1">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg shadow-primary/30">
+                        <i class="bi bi-heart-pulse-fill text-white text-2xl"></i>
+                    </div>
+                    <div>
+                        <div class="font-bold text-xl text-white">{{ SITE_NAME }}</div>
+                        <div class="text-xs text-night-400">مشاوره و روانشناسی</div>
+                    </div>
+                </div>
+                <p class="text-sm leading-7 text-night-400">
+                    ارائه‌دهنده خدمات مشاوره تخصصی خانواده، فردی، طلاق و روانشناسی با بهترین کیفیت.
+                </p>
+            </div>
+
+            <div>
+                <h4 class="text-white font-bold mb-5">دسترسی سریع</h4>
+                <ul class="space-y-3 text-sm">
+                    <li><a href="{% url 'home' %}" class="text-night-300 hover:text-primary transition flex items-center gap-2"><i class="bi bi-chevron-left text-xs"></i> خانه</a></li>
+                    <li><a href="{% url 'service_list' %}" class="text-night-300 hover:text-primary transition flex items-center gap-2"><i class="bi bi-chevron-left text-xs"></i> خدمات</a></li>
+                    <li><a href="{% url 'package_list' %}" class="text-night-300 hover:text-primary transition flex items-center gap-2"><i class="bi bi-chevron-left text-xs"></i> بسته‌ها</a></li>
+                    <li><a href="{% url 'article_list' %}" class="text-night-300 hover:text-primary transition flex items-center gap-2"><i class="bi bi-chevron-left text-xs"></i> مقالات</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="text-white font-bold mb-5">اطلاعات تماس</h4>
+                <ul class="space-y-4 text-sm">
+                    <li class="flex items-start gap-3 text-night-300">
+                        <i class="bi bi-geo-alt-fill text-primary mt-1"></i>
+                        <span class="leading-7">{{ SITE_ADDRESS }}</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <i class="bi bi-telephone-fill text-primary"></i>
+                        <a href="tel:{{ SITE_PHONE }}" dir="ltr" class="text-night-300 hover:text-primary transition">{{ SITE_PHONE }}</a>
+                    </li>
+                    <li class="flex items-center gap-3 text-night-300">
+                        <i class="bi bi-clock-fill text-primary"></i>
+                        <span>هر روز ۱۰ صبح تا ۷ عصر</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="text-white font-bold mb-5">شبکه‌های اجتماعی</h4>
+                <div class="flex gap-3">
+                    <a href="#" class="w-11 h-11 rounded-xl bg-night-800 hover:bg-primary flex items-center justify-center text-night-200 hover:text-white transition-all">
+                        <i class="bi bi-instagram text-xl"></i>
+                    </a>
+                    <a href="#" class="w-11 h-11 rounded-xl bg-night-800 hover:bg-primary flex items-center justify-center text-night-200 hover:text-white transition-all">
+                        <i class="bi bi-telegram text-xl"></i>
+                    </a>
+                    <a href="#" class="w-11 h-11 rounded-xl bg-night-800 hover:bg-primary flex items-center justify-center text-night-200 hover:text-white transition-all">
+                        <i class="bi bi-whatsapp text-xl"></i>
+                    </a>
+                </div>
+                <div class="mt-6 p-4 rounded-2xl bg-night-900 border border-night-800">
+                    <div class="text-xs text-night-400 mb-2">کد نظام روانشناسی</div>
+                    <div class="text-white font-bold">۷۶۴۲۷</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-12 pt-8 border-t border-night-800 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-night-400">
+            <p>تمامی حقوق برای <span class="text-white font-semibold">{{ SITE_NAME }}</span> محفوظ است © ۱۴۰۴</p>
+            <p>طراحی و توسعه با <i class="bi bi-heart-fill text-red-500"></i></p>
+        </div>
+    </div>
+</footer>

@@ -1,0 +1,565 @@
+/* ============================================================
+   ADMIN FULL RESPONSIVE - All Breakpoints
+   ============================================================ */
+
+/* ---------- Base reset ---------- */
+* { box-sizing: border-box; }
+
+img, video, iframe { max-width: 100%; height: auto; }
+
+table { max-width: 100%; }
+
+/* ============================================================
+   LARGE DESKTOP (≥ 1400px)
+   ============================================================ */
+@media (min-width: 1400px) {
+    .top-nav-inner,
+    body #content {
+        max-width: 1400px !important;
+    }
+}
+
+/* ============================================================
+   DESKTOP (1200px - 1399px)
+   ============================================================ */
+@media (max-width: 1399px) {
+    .top-nav-inner,
+    body #content { max-width: 1200px !important; }
+
+    .kpi-grid {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
+    }
+}
+
+/* ============================================================
+   LAPTOP (1024px - 1199px)
+   ============================================================ */
+@media (max-width: 1199px) {
+    body #content { padding: 80px 20px 20px 20px !important; }
+
+    .top-nav-inner { padding: 9px 18px; }
+
+    .kpi-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+        gap: 14px !important;
+    }
+
+    .two-col-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .mini-stats {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)) !important;
+    }
+
+    /* Forms */
+    .custom-fieldset-body .form-row {
+        grid-template-columns: 130px 1fr !important;
+        gap: 12px;
+        padding: 12px 18px !important;
+    }
+
+    /* Tables */
+    .results table,
+    .changelist-container table {
+        font-size: 12px;
+    }
+
+    .results table th,
+    .results table td,
+    .changelist-container table th,
+    .changelist-container table td {
+        padding: 10px 12px !important;
+    }
+
+    /* Filters */
+    #changelist-filter {
+        width: 200px !important;
+    }
+}
+
+/* ============================================================
+   TABLET (768px - 1023px)
+   ============================================================ */
+@media (max-width: 1023px) {
+    body #content { padding: 76px 16px 16px 16px !important; }
+
+    .top-nav-inner {
+        padding: 8px 14px;
+        flex-wrap: nowrap;
+    }
+
+    /* KPI cards - 2 per row */
+    .kpi-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 12px !important;
+    }
+
+    .kpi-card { padding: 16px !important; }
+    .kpi-value { font-size: 24px !important; }
+    .kpi-icon { width: 44px; height: 44px; font-size: 20px; }
+
+    /* Mini stats - 3 per row */
+    .mini-stats {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 10px !important;
+    }
+
+    /* Changelist - column layout */
+    #changelist {
+        flex-direction: column !important;
+    }
+    #changelist-filter {
+        width: 100% !important;
+        border-right: none !important;
+        border-top: 1px solid #1E293B !important;
+        border-radius: 0 0 16px 16px !important;
+        padding: 14px !important;
+    }
+    #changelist-filter ul {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 4px;
+    }
+
+    /* Forms - stack label above input */
+    .custom-fieldset-body .form-row {
+        grid-template-columns: 1fr !important;
+        gap: 8px !important;
+        padding: 14px 16px !important;
+        align-items: stretch;
+    }
+    .custom-fieldset-body .form-row .field-label {
+        font-size: 12.5px !important;
+        padding-top: 0 !important;
+    }
+    .custom-fieldset-body input[type=text],
+    .custom-fieldset-body input[type=password],
+    .custom-fieldset-body input[type=email],
+    .custom-fieldset-body input[type=url],
+    .custom-fieldset-body input[type=number],
+    .custom-fieldset-body input[type=date],
+    .custom-fieldset-body input[type=time],
+    .custom-fieldset-body input[type=datetime-local],
+    .custom-fieldset-body select,
+    .custom-fieldset-body textarea {
+        font-size: 13px !important;
+        padding: 10px 14px !important;
+    }
+
+    /* Quick actions - 2 per row */
+    .quick-actions {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    /* Apps grid - 3 per row */
+    .apps-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
+    }
+
+    /* Page headers */
+    .form-page-header,
+    .changelist-header {
+        padding: 16px 18px !important;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+    .form-page-title,
+    .changelist-title { font-size: 18px !important; }
+    .form-page-title i,
+    .changelist-title i { font-size: 22px !important; }
+
+    /* Submit row */
+    .custom-submit-row {
+        padding: 14px 16px;
+        flex-direction: column-reverse;
+        gap: 10px;
+    }
+    .custom-submit-row .submit-row {
+        width: 100% !important;
+        flex-direction: column-reverse;
+        gap: 8px;
+    }
+    .custom-submit-row input[type=submit],
+    .custom-submit-row .deletelink {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Search bar */
+    #changelist-search {
+        justify-content: stretch !important;
+        padding: 14px 16px !important;
+    }
+    #changelist-search form { max-width: none !important; }
+
+    /* Tables - horizontal scroll */
+    .results,
+    .changelist-container .results {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    .results table,
+    .changelist-container table {
+        min-width: 640px;
+    }
+}
+
+/* ============================================================
+   MOBILE (480px - 767px)
+   ============================================================ */
+@media (max-width: 767px) {
+    html, body {
+        font-size: 14px;
+    }
+
+    body #content {
+        padding: 68px 12px 12px 12px !important;
+    }
+
+    /* Top nav compact */
+    .top-nav-inner {
+        padding: 8px 10px;
+        gap: 6px;
+        min-height: 56px;
+    }
+    .top-nav-left { gap: 5px; }
+    .top-nav-right { gap: 4px; }
+
+    .top-nav-home,
+    .top-nav-icon {
+        width: 38px; height: 38px;
+        font-size: 15px;
+    }
+    .top-nav-btn {
+        height: 38px;
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+    .top-nav-btn-quick span { display: none; }
+    .top-nav-btn-quick {
+        width: 38px; padding: 8px;
+        justify-content: center;
+    }
+    .top-nav-btn > span:not(.top-nav-chevron) { display: none; }
+
+    /* Dropdown - bottom sheet */
+    .top-nav-menu {
+        position: fixed !important;
+        top: auto !important;
+        left: 10px !important;
+        right: 10px !important;
+        bottom: 10px !important;
+        max-height: 75vh;
+        min-width: auto;
+        max-width: none;
+        width: auto;
+        border-radius: 18px;
+    }
+    .top-nav-menu-items {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* KPI - 1 per row */
+    .kpi-grid {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+    }
+    .kpi-card { padding: 14px !important; gap: 12px !important; }
+    .kpi-value { font-size: 22px !important; }
+    .kpi-icon {
+        width: 40px; height: 40px;
+        font-size: 18px;
+    }
+    .kpi-label { font-size: 11px !important; }
+    .kpi-sub { font-size: 10.5px !important; }
+
+    /* Mini stats - 2 per row */
+    .mini-stats {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+    }
+    .mini-stat {
+        padding: 12px !important;
+        gap: 10px !important;
+    }
+    .mini-stat > i {
+        width: 30px; height: 30px;
+        font-size: 16px;
+    }
+    .mini-value { font-size: 17px !important; }
+    .mini-label { font-size: 10.5px !important; }
+
+    /* Card headers */
+    .custom-card-header {
+        padding: 12px 16px !important;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    .custom-card-header h2 { font-size: 13.5px !important; }
+    .custom-card-body { padding: 14px !important; }
+
+    /* Forms */
+    .custom-fieldset-header { padding: 12px 16px !important; }
+    .custom-fieldset-header h2 { font-size: 13px !important; }
+
+    .custom-fieldset-body .form-row {
+        padding: 12px 14px !important;
+    }
+    .custom-fieldset-body input[type=text],
+    .custom-fieldset-body input[type=password],
+    .custom-fieldset-body input[type=email],
+    .custom-fieldset-body input[type=url],
+    .custom-fieldset-body input[type=number],
+    .custom-fieldset-body input[type=date],
+    .custom-fieldset-body input[type=time],
+    .custom-fieldset-body input[type=datetime-local],
+    .custom-fieldset-body select,
+    .custom-fieldset-body textarea {
+        font-size: 13px !important;
+        padding: 10px 12px !important;
+        border-radius: 10px !important;
+    }
+
+    /* Quick actions - 1 per row */
+    .quick-actions {
+        grid-template-columns: 1fr !important;
+        gap: 8px !important;
+    }
+    .quick-action {
+        padding: 12px 14px !important;
+        font-size: 12.5px !important;
+    }
+
+    /* Apps grid - 2 per row */
+    .apps-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+    }
+    .app-item {
+        padding: 12px !important;
+        gap: 8px !important;
+    }
+    .app-icon {
+        width: 34px; height: 34px;
+        font-size: 16px;
+    }
+    .app-name { font-size: 12px !important; }
+
+    /* Page header */
+    .form-page-header,
+    .changelist-header {
+        padding: 14px !important;
+        border-radius: 14px;
+    }
+    .form-page-title,
+    .changelist-title { font-size: 16px !important; }
+    .changelist-count { font-size: 11px; padding: 4px 10px; }
+
+    .btn-primary, .btn-ghost {
+        padding: 10px 16px !important;
+        font-size: 12px !important;
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Tables */
+    .results,
+    .changelist-container .results {
+        overflow-x: auto;
+    }
+    .results table,
+    .changelist-container table {
+        min-width: 560px;
+    }
+    .results table th,
+    .results table td {
+        padding: 9px 10px !important;
+        font-size: 12px !important;
+    }
+
+    /* Filters - 1 col */
+    #changelist-filter ul {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Search */
+    #changelist-search input[type=text] {
+        font-size: 13px !important;
+        padding: 10px 14px !important;
+    }
+    #changelist-search input[type=submit] {
+        padding: 10px 16px !important;
+        font-size: 12.5px !important;
+    }
+
+    /* Submit row */
+    .custom-submit-row {
+        padding: 12px 14px;
+        border-radius: 14px;
+    }
+    .custom-submit-row input[type=submit] {
+        padding: 12px 20px !important;
+        font-size: 13px !important;
+    }
+
+    /* Alerts */
+    .custom-alert, .form-errors-alert, .messagelist li {
+        padding: 12px 14px !important;
+        font-size: 12px !important;
+    }
+
+    /* Paginator */
+    .paginator {
+        padding: 12px 14px !important;
+        font-size: 11.5px;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+}
+
+/* ============================================================
+   SMALL MOBILE (≤ 479px)
+   ============================================================ */
+@media (max-width: 479px) {
+    body #content {
+        padding: 62px 8px 8px 8px !important;
+    }
+
+    .top-nav-inner { padding: 6px 8px; gap: 4px; }
+
+    .top-nav-home,
+    .top-nav-icon,
+    .top-nav-btn {
+        height: 34px;
+        font-size: 12px;
+    }
+    .top-nav-home,
+    .top-nav-icon {
+        width: 34px; padding: 6px;
+    }
+    .top-nav-btn { padding: 6px 10px; }
+
+    .kpi-value { font-size: 20px !important; }
+    .mini-stats {
+        grid-template-columns: 1fr !important;
+    }
+
+    .form-page-title,
+    .changelist-title { font-size: 15px !important; }
+
+    .custom-fieldset-body .form-row {
+        padding: 10px 12px !important;
+    }
+
+    .apps-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* ============================================================
+   LANDSCAPE MOBILE
+   ============================================================ */
+@media (max-height: 500px) and (orientation: landscape) {
+    .top-nav-menu {
+        max-height: 60vh;
+    }
+}
+
+/* ============================================================
+   TOUCH DEVICES - Bigger tap targets
+   ============================================================ */
+@media (hover: none) and (pointer: coarse) {
+    .top-nav-home,
+    .top-nav-icon,
+    .top-nav-btn {
+        min-height: 44px;
+    }
+    .top-nav-menu-item {
+        min-height: 46px;
+        padding: 11px 14px;
+    }
+    .sidebar-link { min-height: 46px; }
+
+    /* Remove hover effects on touch */
+    .kpi-card:hover,
+    .custom-card:hover {
+        transform: none !important;
+    }
+}
+
+/* ============================================================
+   PRINT
+   ============================================================ */
+@media print {
+    .top-nav,
+    .top-nav-menu,
+    .custom-submit-row,
+    #changelist-filter,
+    .object-tools,
+    .actions {
+        display: none !important;
+    }
+    body #content {
+        padding: 0 !important;
+        max-width: none !important;
+    }
+    body, html {
+        background: white !important;
+        color: black !important;
+    }
+    a { color: black !important; text-decoration: underline; }
+}
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ============================================================
+   HORIZONTAL SCROLL GUARD (fix overflow)
+   ============================================================ */
+html, body { max-width: 100vw; overflow-x: hidden; }
+#container, #main, .main, #content { max-width: 100%; }
+
+/* ============================================================
+   FORCE ALL TABLES TO SCROLL ON SMALL SCREENS
+   ============================================================ */
+@media (max-width: 900px) {
+    .results, .changelist-container .results, .module table {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* ============================================================
+   INLINES FIX
+   ============================================================ */
+@media (max-width: 767px) {
+    .inline-group .tabular table,
+    .inline-related table {
+        min-width: 640px;
+    }
+    .inline-group .tabular,
+    .inline-related { overflow-x: auto; }
+}
+
+/* ============================================================
+   FIX COLLAPSED FIELDSET TITLES ON MOBILE
+   ============================================================ */
+@media (max-width: 767px) {
+    .custom-fieldset.collapsed .custom-fieldset-header h2 {
+        font-size: 12.5px !important;
+    }
+    fieldset.collapse { 
+        border-radius: 12px;
+    }
+}

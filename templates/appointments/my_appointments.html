@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}نوبت‌های من{% endblock %}
+
+{% block content %}
+<section class="min-h-screen bg-night-900 py-10">
+    <div class="max-w-6xl mx-auto px-4 lg:px-8">
+
+        <div class="flex items-center justify-between mb-8 flex-wrap gap-4">
+            <div>
+                <h1 class="text-3xl font-black text-dark mb-2">نوبت‌های من</h1>
+                <p class="text-night-400">مدیریت نوبت‌های رزرو شده شما</p>
+            </div>
+            <a href="{% url 'appointments:book' %}"
+               class="inline-flex items-center gap-2 bg-gradient-to-l from-primary to-primary-700 text-white font-bold px-6 py-3 rounded-2xl hover:shadow-lg hover:shadow-primary/30 transition">
+                <i class="bi bi-plus-circle"></i>
+                نوبت جدید
+            </a>
+        </div>
+
+        <!-- Upcoming -->
+        <div class="mb-12">
+            <h2 class="text-xl font-black text-dark mb-5 flex items-center gap-3">
+                <span class="w-1.5 h-7 bg-emerald-500 rounded-full"></span>
+                نوبت‌های پیش رو
+                <span class="text-sm font-normal text-night-400">({{ upcoming.count }})</span>
+            </h2>
+
+            {% if upcoming %}
+            <div class="grid md:grid-cols-2 gap-4">
+                {% for app in upcoming %}
+                <div class="bg-night-800 rounded-3xl border border-night-700 hover:shadow-lg transition p-6">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-2xl bg-primary-50 flex items-center justify-center text-primary">
+                                <i class="bi bi-heart-pulse text-xl"></i>
+                            </div>
+                            <div>
+                                <div class="font-bold text-dark">{{ app.service.name }}</div>
+                                <div class="text-xs text-night-400">با {{ app.staff.user.get_full_name|default:app.staff.user.username }}</div>
+                            </div>
+                        </div>
+                        <span class="inline-flex items-center gap-1 text-xs font-bold px-3 py-1.5 rounded-full
+                                     bg-{{ app.status_color }}-50 text-{{ app.status_color }}-700">
+                            <span class="w-1.5 h-1.5 rounded-full bg-{{ app.status_color }}-500"></span>
+                            {{ app.get_status_display }}
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 mb-4 p-3 bg-night-900 rounded-2xl">
+                        <div class="flex items-center gap-2 text-sm">
+                            <i class="bi bi-calendar3 text-primary"></i>
+                            <span>{{ app.get_jalali_date|date:"Y/m/d" }}</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-sm">
+                            <i class="bi bi-clock text-primary"></i>
+                            <span>{{ app.start_time|time:"H:i" }} - {{ app.end_time|time:"H:i" }}</span>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <a href="{% url 'appointments:detail' app.pk %}"
+                           class="flex-1 text-center bg-slate-100 hover:bg-slate-200 text-night-200 font-bold py-2.5 rounded-xl transition text-sm">
+                            جزئیات
+                        </a>
+                        {% if app.can_cancel %}
+                        <a href="{% url 'appointments:cancel' app.pk %}"
+                           class="flex-1 text-center bg-red-50 hover:bg-red-100 text-red-600 font-bold py-2.5 rounded-xl transition text-sm">
+                            <i class="bi bi-x-circle"></i> لغو
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="bg-night-800 rounded-3xl border border-dashed border-night-600 p-12 text-center">
+                <i class="bi bi-calendar-x text-5xl text-slate-300 mb-4"></i>
+                <h3 class="font-bold text-night-300 mb-2">نوبت فعالی ندارید</h3>
+                <p class="text-night-500 text-sm mb-6">اولین نوبت خود را همین حالا رزرو کنید</p>
+                <a href="{% url 'appointments:book' %}" class="inline-flex items-center gap-2 bg-primary text-white font-bold px-6 py-3 rounded-2xl">
+                    <i class="bi bi-calendar-plus"></i> رزرو نوبت
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Past -->
+        {% if past %}
+        <div>
+            <h2 class="text-xl font-black text-dark mb-5 flex items-center gap-3">
+                <span class="w-1.5 h-7 bg-slate-400 rounded-full"></span>
+                تاریخچه نوبت‌ها
+            </h2>
+
+            <div class="bg-night-800 rounded-3xl border border-night-700 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-night-900 border-b border-night-700">
+                            <tr class="text-xs font-bold text-night-400">
+                                <th class="text-right py-4 px-4">سرویس</th>
+                                <th class="text-right py-4 px-4">تاریخ</th>
+                                <th class="text-right py-4 px-4">ساعت</th>
+                                <th class="text-right py-4 px-4">وضعیت</th>
+                                <th class="text-right py-4 px-4">عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-night-700">
+                            {% for app in past %}
+                            <tr class="hover:bg-night-900 transition">
+                                <td class="py-4 px-4 text-sm font-bold">{{ app.service.name }}</td>
+                                <td class="py-4 px-4 text-sm">{{ app.get_jalali_date|date:"Y/m/d" }}</td>
+                                <td class="py-4 px-4 text-sm">{{ app.start_time|time:"H:i" }}</td>
+                                <td class="py-4 px-4">
+                                    <span class="inline-flex items-center gap-1 text-xs font-bold px-3 py-1 rounded-full
+                                                 bg-{{ app.status_color }}-50 text-{{ app.status_color }}-700">
+                                        {{ app.get_status_display }}
+                                    </span>
+                                </td>
+                                <td class="py-4 px-4">
+                                    <div class="flex gap-2 items-center">
+                                        <a href="{% url 'appointments:detail' app.pk %}" class="text-primary font-bold text-sm hover:underline">
+                                            جزئیات
+                                        </a>
+                                        {% if app.status == 'completed' %}
+                                            {% if app.review %}
+                                                <span class="text-xs text-emerald-400 flex items-center gap-1">
+                                                    <i class="bi bi-check-circle-fill"></i> نظر داده‌اید
+                                                </span>
+                                            {% else %}
+                                                <a href="{% url 'service_detail' app.service.slug %}#reviews"
+                                                   class="text-amber-400 font-bold text-sm hover:underline flex items-center gap-1">
+                                                    <i class="bi bi-star-fill"></i>
+                                                    ثبت نظر
+                                                </a>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+</section>
+{% endblock %}

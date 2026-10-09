@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+{% load fa_numbers %}
+{% load humanize %}
+
+{% block title %}خدمات ما{% endblock %}
+
+{% block content %}
+
+<!-- Hero -->
+<section class="relative overflow-hidden bg-gradient-to-bl from-night-900 via-night-900 to-night-800 py-20">
+    <div class="absolute top-10 right-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-float"></div>
+    <div class="absolute bottom-10 left-10 w-72 h-72 bg-accent/10 rounded-full blur-3xl animate-float" style="animation-delay:1s"></div>
+
+    <div class="relative max-w-7xl mx-auto px-4 lg:px-8 text-center" data-aos="fade-up">
+        <nav class="flex items-center justify-center gap-2 text-sm text-night-400 mb-6">
+            <a href="{% url 'home' %}" class="hover:text-primary">خانه</a>
+            <i class="bi bi-chevron-left text-xs"></i>
+            <span class="text-primary font-semibold">خدمات</span>
+        </nav>
+        <h1 class="text-4xl md:text-5xl font-black text-dark mb-4">خدمات تخصصی ما</h1>
+        <p class="text-night-300 max-w-2xl mx-auto leading-8">
+            مجموعه‌ای کامل از خدمات مشاوره و روانشناسی برای کمک به شما در مسیر بهبودی و رشد.
+        </p>
+    </div>
+</section>
+
+<!-- Filters -->
+<section class="py-8 sticky top-20 z-30 bg-night-800/80 backdrop-blur-xl border-y border-night-700">
+    <div class="max-w-7xl mx-auto px-4 lg:px-8">
+        <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+            <!-- Category chips -->
+            <div class="flex flex-wrap gap-2 overflow-x-auto w-full md:w-auto">
+                <a href="{% url 'service_list' %}"
+                   class="px-5 py-2 rounded-full text-sm font-semibold transition whitespace-nowrap
+                          {% if not selected_category %}bg-primary text-white{% else %}bg-slate-100 text-night-200 hover:bg-slate-200{% endif %}">
+                    همه ({{ services|length }})
+                </a>
+                {% for cat in categories %}
+                    <a href="?category={{ cat.slug }}{% if search %}&q={{ search }}{% endif %}"
+                       class="px-5 py-2 rounded-full text-sm font-semibold transition whitespace-nowrap
+                              {% if selected_category == cat.slug %}bg-primary text-white{% else %}bg-slate-100 text-night-200 hover:bg-slate-200{% endif %}">
+                        {{ cat.name }} ({{ cat.services.count }})
+                    </a>
+                {% endfor %}
+            </div>
+
+            <!-- Search -->
+            <form method="get" class="relative w-full md:w-72">
+                {% if selected_category %}<input type="hidden" name="category" value="{{ selected_category }}">{% endif %}
+                <input type="text" name="q" value="{{ search }}" placeholder="جستجو در خدمات..."
+                       class="w-full pr-10 pl-4 py-2.5 rounded-full bg-slate-100 focus:bg-night-800 border-2 border-transparent focus:border-primary/30 outline-none transition text-sm">
+                <i class="bi bi-search absolute right-4 top-1/2 -translate-y-1/2 text-night-500"></i>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- Services Grid -->
+<section class="py-16">
+    <div class="max-w-7xl mx-auto px-4 lg:px-8">
+        {% if services %}
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for service in services %}
+            <a href="{% url 'service_detail' service.slug %}"
+               class="group relative bg-night-800 rounded-3xl overflow-hidden border border-night-700 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 transition-all duration-300 hover:-translate-y-2"
+               data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:0 }}00">
+
+                <!-- Image or icon -->
+                <div class="relative h-48 bg-gradient-to-br from-primary/20 to-accent/10 overflow-hidden">
+                    {% if service.image %}
+                        <img src="{{ service.image.url }}" alt="{{ service.name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    {% else %}
+                        <div class="w-full h-full flex items-center justify-center">
+                            <i class="bi {{ service.category.icon|default:'bi-heart-pulse' }} text-7xl text-primary/30 group-hover:scale-110 transition-transform duration-500"></i>
+                        </div>
+                    {% endif %}
+                    {% if service.is_featured %}
+                    <span class="absolute top-4 right-4 bg-gradient-to-l from-amber-400 to-orange-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
+                        <i class="bi bi-star-fill text-xs"></i> ویژه
+                    </span>
+                    {% endif %}
+                    <span class="absolute bottom-4 right-4 bg-night-800/90 backdrop-blur text-primary text-xs font-bold px-3 py-1.5 rounded-full">
+                        {{ service.category.name }}
+                    </span>
+                </div>
+
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-xl font-bold text-white group-hover:text-primary transition">{{ service.name }}</h3>
+                        {% if service.reviews_count > 0 %}
+                        <div class="flex items-center gap-1 shrink-0">
+                            <i class="bi bi-star-fill text-amber-400 text-sm"></i>
+                            <span class="text-white text-sm font-bold">{{ service.average_rating }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <p class="text-night-400 text-sm leading-7 mb-5 line-clamp-2">
+                        {{ service.short_description|default:service.description|truncatewords:15 }}
+                    </p>
+
+                    <div class="flex items-center gap-4 mb-5 text-xs text-night-400">
+                        <div class="flex items-center gap-1.5">
+                            <i class="bi bi-clock text-primary"></i>
+                            <span>{{ service.duration|duration_fa }}</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <i class="bi bi-tag text-primary"></i>
+                            <span>{{ service.category.name }}</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-5 border-t border-night-700">
+                        <div>
+                            <div class="text-xs text-night-500 mb-1">شروع از</div>
+                            <div class="font-black text-primary text-lg">{{ service.price|price_fa }} <span class="text-xs font-normal text-night-400">تومان</span></div>
+                        </div>
+                        <div class="w-10 h-10 rounded-full bg-primary/5 group-hover:bg-primary group-hover:text-white flex items-center justify-center transition">
+                            <i class="bi bi-arrow-left"></i>
+                        </div>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-20 bg-night-800 rounded-3xl border border-dashed border-night-600" data-aos="fade-up">
+            <i class="bi bi-search text-6xl text-slate-300 mb-4"></i>
+            <h3 class="text-xl font-bold text-night-300 mb-2">خدمتی یافت نشد</h3>
+            <p class="text-night-500 mb-6">فیلترها را تغییر دهید یا عبارت دیگری جستجو کنید.</p>
+            <a href="{% url 'service_list' %}" class="inline-flex items-center gap-2 bg-primary text-white font-bold px-6 py-3 rounded-2xl">
+                <i class="bi bi-arrow-clockwise"></i> نمایش همه خدمات
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="py-16">
+    <div class="max-w-7xl mx-auto px-4 lg:px-8">
+        <div class="relative overflow-hidden rounded-[2rem] bg-gradient-to-bl from-primary via-primary-600 to-primary-700 p-10 md:p-16 text-center" data-aos="zoom-in">
+            <div class="absolute top-0 right-0 w-72 h-72 bg-night-700/30 rounded-full blur-3xl"></div>
+            <div class="relative">
+                <h2 class="text-3xl md:text-4xl font-black text-white mb-4">نمی‌دانید کدام خدمت مناسب شماست؟</h2>
+                <p class="text-white/80 mb-8 max-w-2xl mx-auto">با ما تماس بگیرید تا مشاوران ما بهترین گزینه را به شما پیشنهاد دهند.</p>
+                <a href="{% url 'contact' %}" class="inline-flex items-center gap-2 bg-night-800 text-primary font-bold px-8 py-4 rounded-2xl hover:bg-slate-100 transition">
+                    <i class="bi bi-telephone-fill"></i> مشاوره رایگان
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

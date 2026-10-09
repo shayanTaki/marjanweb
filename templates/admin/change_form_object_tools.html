@@ -1,0 +1,11 @@
+{% load i18n admin_urls %}
+{% block object-tools-items %}
+    {% if has_add_permission %}
+        <li>
+            <a href="{% url opts|admin_urlname:'add' %}{% if is_popup %}?_popup=1{% endif %}" class="addlink">
+                <i class="bi bi-plus-circle-fill"></i>
+                افزودن {{ opts.verbose_name }}
+            </a>
+        </li>
+    {% endif %}
+{% endblock %}

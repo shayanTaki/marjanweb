@@ -1,0 +1,193 @@
+/* ============================================================
+   MAIN SITE RESPONSIVE
+   ============================================================ */
+
+/* ---------- Base ---------- */
+* { box-sizing: border-box; }
+img, video { max-width: 100%; height: auto; }
+
+/* ---------- Package Cards (clickable) ---------- */
+.package-card,
+.pricing-card,
+.service-card,
+[data-package-card] {
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.package-card:hover,
+.pricing-card:hover,
+.service-card:hover,
+[data-package-card]:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px -10px rgba(0,0,0,0.3);
+}
+
+/* Buy button inside card */
+.package-card .btn-buy,
+.pricing-card .btn-buy,
+.service-card .btn-buy,
+[data-package-card] .btn-buy {
+    position: relative;
+    z-index: 2;
+    pointer-events: auto;
+}
+
+/* Overlay link covers whole card */
+.package-card .card-overlay-link,
+.pricing-card .card-overlay-link,
+.service-card .card-overlay-link {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    text-indent: -9999px;
+    overflow: hidden;
+    background: transparent;
+}
+
+/* ============================================================
+   CONTAINER / GRID RESPONSIVE
+   ============================================================ */
+.container,
+.container-fluid {
+    width: 100%;
+    padding-right: 16px;
+    padding-left: 16px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+@media (min-width: 576px) { .container { max-width: 540px; } }
+@media (min-width: 768px) { .container { max-width: 720px; } }
+@media (min-width: 992px) { .container { max-width: 960px; } }
+@media (min-width: 1200px) { .container { max-width: 1140px; } }
+@media (min-width: 1400px) { .container { max-width: 1320px; } }
+
+/* Auto grid for cards */
+.packages-grid,
+.services-grid,
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+@media (max-width: 767px) {
+    .packages-grid,
+    .services-grid,
+    .cards-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+}
+
+/* ============================================================
+   NAVBAR RESPONSIVE
+   ============================================================ */
+.site-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 12px 20px;
+}
+
+@media (max-width: 767px) {
+    .site-nav { padding: 10px 14px; }
+    .site-nav .nav-links { 
+        flex-basis: 100%;
+        justify-content: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+}
+
+/* ============================================================
+   HERO / BANNER
+   ============================================================ */
+.hero {
+    padding: 60px 20px;
+    text-align: center;
+}
+.hero h1 { font-size: 42px; }
+
+@media (max-width: 767px) {
+    .hero { padding: 40px 16px; }
+    .hero h1 { font-size: 28px; }
+    .hero p { font-size: 15px; }
+}
+
+/* ============================================================
+   TABLES (frontend)
+   ============================================================ */
+.site-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.site-table { min-width: 560px; width: 100%; }
+
+/* ============================================================
+   FORMS (frontend)
+   ============================================================ */
+.form-control, input[type=text], input[type=email], input[type=password],
+input[type=tel], input[type=number], select, textarea {
+    max-width: 100%;
+    width: 100%;
+}
+
+@media (max-width: 767px) {
+    .form-row { flex-direction: column; gap: 10px; }
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+@media (max-width: 767px) {
+    .site-footer {
+        text-align: center;
+        padding: 24px 14px;
+    }
+    .site-footer .footer-cols {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+}
+
+/* ============================================================
+   UTILITY CLASSES
+   ============================================================ */
+.hide-mobile { display: block; }
+.show-mobile { display: none; }
+
+@media (max-width: 767px) {
+    .hide-mobile { display: none !important; }
+    .show-mobile { display: block !important; }
+}
+
+.text-center-mobile { text-align: inherit; }
+@media (max-width: 767px) {
+    .text-center-mobile { text-align: center; }
+}
+
+/* ============================================================
+   TOUCH FRIENDLY
+   ============================================================ */
+@media (hover: none) and (pointer: coarse) {
+    .btn, button, a.btn {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    .package-card:hover,
+    .pricing-card:hover,
+    .service-card:hover {
+        transform: none;
+    }
+}
+
+/* ============================================================
+   NO HORIZONTAL SCROLL
+   ============================================================ */
+html, body { overflow-x: hidden; max-width: 100vw; }

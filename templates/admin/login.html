@@ -1,0 +1,160 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block bodyclass %}{{ block.super }} custom-login{% endblock %}
+{% block usertools %}{% endblock %}
+{% block nav-global %}{% endblock %}
+{% block nav-sidebar %}{% endblock %}
+{% block content_title %}{% endblock %}
+{% block breadcrumbs %}{% endblock %}
+
+{% block content %}
+<div class="login-split">
+
+    <!-- Left panel: brand -->
+    <div class="login-brand">
+        <div class="login-brand-inner">
+            <div class="login-brand-logo">
+                <i class="bi bi-heart-pulse-fill"></i>
+            </div>
+            <h1>مرجان آرام</h1>
+            <p>مرکز مشاوره و روانشناسی</p>
+
+            <div class="login-features">
+                <div class="login-feature">
+                    <i class="bi bi-shield-check"></i>
+                    <span>پنل امن و اختصاصی</span>
+                </div>
+                <div class="login-feature">
+                    <i class="bi bi-graph-up-arrow"></i>
+                    <span>آمار و گزارش‌های لحظه‌ای</span>
+                </div>
+                <div class="login-feature">
+                    <i class="bi bi-lightning-charge-fill"></i>
+                    <span>دسترسی سریع به همه امکانات</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="login-brand-footer">
+            <small>تمامی حقوق برای مرجان آرام محفوظ است © ۱۴۰۴</small>
+        </div>
+    </div>
+
+    <!-- Right panel: form -->
+    <div class="login-form-panel">
+        <div class="login-form-wrap">
+
+            <div class="login-header">
+                <h2>خوش آمدید 👋</h2>
+                <p>برای ورود به پنل مدیریت، اطلاعات خود را وارد کنید</p>
+            </div>
+
+            {% if form.errors and not form.non_field_errors %}
+                <div class="login-alert login-alert-error">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <span>لطفاً خطاهای زیر را برطرف کنید.</span>
+                </div>
+            {% endif %}
+
+            {% if form.non_field_errors %}
+                {% for error in form.non_field_errors %}
+                    <div class="login-alert login-alert-error">
+                        <i class="bi bi-x-circle-fill"></i>
+                        <span>{{ error }}</span>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% if user.is_authenticated %}
+                <div class="login-alert login-alert-warning">
+                    <i class="bi bi-info-circle-fill"></i>
+                    <span>شما با نام {{ username }} وارد شده‌اید. ادامه می‌دهید؟</span>
+                </div>
+            {% endif %}
+
+            <form action="{{ app_path }}" method="post" id="login-form" class="login-form">
+                {% csrf_token %}
+
+                <div class="login-field">
+                    <label for="id_username">
+                        <i class="bi bi-person-fill"></i>
+                        نام کاربری
+                    </label>
+                    {{ form.username }}
+                    {% if form.username.errors %}
+                        <div class="field-error">{{ form.username.errors|join:", " }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="login-field">
+                    <label for="id_password">
+                        <i class="bi bi-lock-fill"></i>
+                        رمز عبور
+                    </label>
+                    {{ form.password }}
+                    {% if form.password.errors %}
+                        <div class="field-error">{{ form.password.errors|join:", " }}</div>
+                    {% endif %}
+                </div>
+
+                <input type="hidden" name="next" value="{{ next }}">
+
+                <button type="submit" class="login-btn">
+                    <i class="bi bi-box-arrow-in-left"></i>
+                    ورود به پنل
+                </button>
+
+                {% url 'admin_password_reset' as password_reset_url %}
+                {% if password_reset_url %}
+                <div class="login-lost">
+                    <a href="{{ password_reset_url }}">
+                        <i class="bi bi-question-circle"></i>
+                        رمز عبور خود را فراموش کرده‌اید؟
+                    </a>
+                </div>
+                {% endif %}
+            </form>
+
+            <div class="login-back">
+                <a href="/">
+                    <i class="bi bi-arrow-right"></i>
+                    بازگشت به سایت
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<style>
+/* Hide Django admin chrome on login page */
+body.custom-login #header,
+body.custom-login .breadcrumbs,
+body.custom-login #nav-sidebar,
+body.custom-login .top-nav,
+body.custom-login #topNav {
+    display: none !important;
+}
+
+body.custom-login {
+    background: #0A0E1F !important;
+    margin: 0;
+    padding: 0;
+}
+
+body.custom-login #container {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+body.custom-login #content {
+    padding: 0 !important;
+    max-width: none !important;
+}
+
+body.custom-login .main {
+    padding: 0 !important;
+}
+</style>
+{% endblock %}

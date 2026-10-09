@@ -1,0 +1,107 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+{% load i18n admin_urls static admin_list %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'admin-custom/css/topnav.css' %}">
+<script src="{% static 'admin-custom/js/admin.js' %}?v=12"></script>
+{% endblock %}
+
+{% block bodyclass %}{{ block.super }} app-{{ opts.app_label }} model-{{ opts.model_name }} change-list{% endblock %}
+
+{% block coltype %}flex{% endblock %}
+
+{% block nav-sidebar %}
+    {% include "admin/top_nav.html" %}
+{% endblock %}
+
+{% block content %}
+<div id="content-main" class="custom-changelist-wrap">
+
+    <div class="changelist-header">
+        <div class="changelist-title-group">
+            <h1 class="changelist-title">
+                <i class="bi bi-list-check"></i>
+                {{ cl.opts.verbose_name_plural|capfirst }}
+            </h1>
+            {% if cl.result_count %}
+                <span class="changelist-count">{{ cl.result_count }} مورد</span>
+            {% endif %}
+        </div>
+        <div class="changelist-actions">
+            {% if has_add_permission %}
+                <a href="{% url cl.opts|admin_urlname:'add' %}{% if is_popup %}?_popup=1{% endif %}"
+                   class="btn-primary">
+                    <i class="bi bi-plus-circle-fill"></i>
+                    <span>افزودن {{ cl.opts.verbose_name }}</span>
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="changelist-container">
+        {% block search %}{% search_form cl %}{% endblock %}
+        {% block date_hierarchy %}{% if cl.date_hierarchy %}{% date_hierarchy cl %}{% endif %}{% endblock %}
+
+        <form id="changelist-form" method="post"{% if cl.formset and cl.formset.is_multipart %} enctype="multipart/form-data"{% endif %} novalidate>
+            {% csrf_token %}
+            {% if cl.formset %}<div>{{ cl.formset.management_form }}</div>{% endif %}
+
+            {% block result_list %}
+                {% if action_form and actions_on_top and cl.show_admin_actions %}{% admin_actions %}{% endif %}
+                {% result_list cl %}
+                {% if action_form and actions_on_bottom and cl.show_admin_actions %}{% admin_actions %}{% endif %}
+            {% endblock %}
+
+            {% block pagination %}{% pagination cl %}{% endblock %}
+        </form>
+    </div>
+</div>
+
+{# =============================================== #}
+{#  FORCE LOAD admin.js on change list pages      #}
+{# =============================================== #}
+<script src="{% static 'admin-custom/js/admin.js' %}?v=11"></script>
+<script>
+    setTimeout(function() {
+        var btn = document.getElementById('adminMenuBtn');
+        var panel = document.getElementById('adminMenuPanel');
+        if (!btn || !panel) return;
+        if (btn.dataset.bound === '1') return;
+        btn.dataset.bound = '1';
+        console.log('[Admin-Forced] Binding menu (changelist)');
+        var open = false;
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (open) {
+                panel.classList.remove('is-open');
+                btn.classList.remove('top-nav-btn-active');
+                open = false;
+            } else {
+                var rect = btn.getBoundingClientRect();
+                var winW = window.innerWidth;
+                var menuWidth = Math.min(560, winW - 40);
+                var rightEdge = winW - rect.right;
+                var availableLeft = winW - rightEdge - menuWidth - 16;
+                var finalRight = availableLeft < 0 ? Math.max(16, (winW - menuWidth) / 2) : rightEdge;
+                panel.style.top = (rect.bottom + 10) + 'px';
+                panel.style.right = finalRight + 'px';
+                panel.style.left = 'auto';
+                panel.style.width = menuWidth + 'px';
+                panel.classList.add('is-open');
+                btn.classList.add('top-nav-btn-active');
+                open = true;
+            }
+        });
+        document.addEventListener('click', function(e) {
+            if (open && !panel.contains(e.target) && !btn.contains(e.target)) {
+                panel.classList.remove('is-open');
+                btn.classList.remove('top-nav-btn-active');
+                open = false;
+            }
+        });
+    }, 100);
+</script>
+{% endblock %}

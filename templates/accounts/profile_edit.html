@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}ویرایش پروفایل{% endblock %}
+{% block content %}
+<section class="py-16">
+    <div class="max-w-2xl mx-auto px-4">
+        <div class="bg-night-800 rounded-3xl shadow-lg border border-night-700 p-8">
+            <h1 class="text-2xl font-black text-dark mb-6">ویرایش پروفایل</h1>
+            <form method="post" enctype="multipart/form-data" class="space-y-5">
+                {% csrf_token %}
+                {% for field in form %}
+                <div>
+                    <label class="block text-sm font-semibold mb-2">{{ field.label }}</label>
+                    {{ field }}
+                </div>
+                {% endfor %}
+                <button type="submit" class="bg-primary text-white font-bold px-8 py-3 rounded-2xl hover:bg-primary-600 transition">ذخیره تغییرات</button>
+            </form>
+        </div>
+    </div>
+</section>
+<style>
+    input { width: 100%; padding: 0.75rem 1rem; border-radius: 1rem; border: 1px solid #f1f5fa; font-family: inherit; }
+    input:focus { outline: none; border-color: #2B6CF5; box-shadow: 0 0 0 4px rgba(43,108,245,0.1); }
+</style>
+{% endblock %}
